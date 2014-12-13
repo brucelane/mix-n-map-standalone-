@@ -19,14 +19,14 @@ Textures::Textures(ParameterBagRef aParameterBag, ShadersRef aShadersRef)
 	log->logTimedString("Textures constructor");
 
 	// init texture
-	startupImage = gl::Texture::create(loadImage(loadResource(IMG)));
+	startupImage = gl::Texture::create(loadImage(loadResource(IMG)), gl::Texture2d::Format().loadTopDown());
 
 	// init
 	string pathToStartupFile = (getAssetPath("") / "startup.jpg").string();
 	if (fs::exists(pathToStartupFile))
 	{
 		log->logTimedString("startup.jpg image found, loading");
-		startupImage = gl::Texture::create(loadImage(loadAsset("startup.jpg")));
+		startupImage = gl::Texture::create(loadImage(loadAsset("startup.jpg")), gl::Texture2d::Format().loadTopDown());
 		log->logTimedString("startup.jpg image loaded");
 	}
 	createTexture("startup image", mParameterBag->mFboWidth, mParameterBag->mFboHeight, startupImage);
@@ -52,7 +52,7 @@ void Textures::createWarpInput()
 	newWarpInput.iCrossfade = 0.5;
 	warpInputs.push_back(newWarpInput);
 	// init mixTextures
-	mMixesFbos.push_back(gl::Fbo::create(mParameterBag->mFboWidth, mParameterBag->mFboHeight, fboFormat.depthTexture()));//640x360 or 480?
+	mMixesFbos.push_back(gl::Fbo::create(mParameterBag->mFboWidth, mParameterBag->mFboHeight, fboFormat.depthTexture()));
 }
 void Textures::setShadaIndex(int index) 
 { 

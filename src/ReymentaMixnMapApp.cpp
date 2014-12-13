@@ -4,11 +4,15 @@ void ReymentaMixnMapApp::prepareSettings(Settings *settings)
 {
 	// instanciate the logger class
 	log = Logger::create("MixnMap.txt");
-	log->logTimedString("start");
+	log->logTimedString("prepareSettings start");
 
 	// parameters
 	mParameterBag = ParameterBag::create();
-	if (mParameterBag->mAutoLayout) getWindowsResolution();
+	// if AutoLayout, try to position the window on the 2nd screen
+	if (mParameterBag->mAutoLayout)
+	{
+		getWindowsResolution();
+	}
 #ifdef _DEBUG
 	// debug mode
 	settings->setWindowSize(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
@@ -23,7 +27,7 @@ void ReymentaMixnMapApp::prepareSettings(Settings *settings)
 	settings->setFrameRate(1000.0f);
 
 	if (mParameterBag->mShowConsole) settings->enableConsoleWindow();
-
+	log->logTimedString("prepareSettings done");
 }
 void ReymentaMixnMapApp::getWindowsResolution()
 {

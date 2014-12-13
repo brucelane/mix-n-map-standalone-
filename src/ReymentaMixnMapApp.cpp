@@ -8,17 +8,17 @@ void ReymentaMixnMapApp::prepareSettings(Settings *settings)
 
 	// parameters
 	mParameterBag = ParameterBag::create();
-	getWindowsResolution();
+	if (mParameterBag->mAutoLayout) getWindowsResolution();
 #ifdef _DEBUG
 	// debug mode
-	settings->setWindowSize(mParameterBag->mMainDisplayWidth - 300, mParameterBag->mMainDisplayHeight - 200);
-	settings->setWindowPos(ivec2(mParameterBag->mRenderX, mParameterBag->mRenderY+50));
+	settings->setWindowSize(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
+	settings->setWindowPos(ivec2(mParameterBag->mRenderX, mParameterBag->mRenderY));
 #else
-	settings->setWindowSize(mParameterBag->mMainDisplayWidth * 2 / 3, mParameterBag->mMainDisplayHeight - 200);
-	settings->setWindowPos(ivec2(mParameterBag->mRenderX - mParameterBag->mMainDisplayWidth, mParameterBag->mRenderY + 50));
-	//setBorderless();
+	settings->setWindowSize(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
+	settings->setWindowPos(ivec2(mParameterBag->mRenderX, mParameterBag->mRenderY));
+	settings->setBorderless();
 #endif  // _DEBUG
-	settings->setResizable(true); // allowed for a receiver
+	settings->setResizable(false); // resize allowed for a receiver, but runtime error on the resize in the shaders drawing
 	// set a high frame rate to disable limitation
 	settings->setFrameRate(1000.0f);
 
@@ -32,20 +32,20 @@ void ReymentaMixnMapApp::getWindowsResolution()
 	// Display sizes
 	mParameterBag->mMainDisplayWidth = Display::getMainDisplay()->getWidth();
 	mParameterBag->mMainDisplayHeight = Display::getMainDisplay()->getHeight();
-	mParameterBag->mRenderX = mParameterBag->mMainDisplayWidth;
 	mParameterBag->mRenderY = 0;
 	for (auto display : Display::getDisplays())
 	{
 		mParameterBag->mDisplayCount++;
 		mParameterBag->mRenderWidth = display->getWidth();
 		mParameterBag->mRenderHeight = display->getHeight();
+		
 		log->logTimedString("Window " + toString(mParameterBag->mDisplayCount) + ": " + toString(mParameterBag->mRenderWidth) + "x" + toString(mParameterBag->mRenderHeight));
 	}
 	log->logTimedString(" mRenderWidth" + toString(mParameterBag->mRenderWidth) + "mRenderHeight" + toString(mParameterBag->mRenderHeight));
 	mParameterBag->mRenderResoXY = vec2(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
 
 	// in case only one screen , render from x = 0
-	if (mParameterBag->mDisplayCount == 1) mParameterBag->mRenderX = 0;
+	if (mParameterBag->mDisplayCount == 1) mParameterBag->mRenderX = 0; else mParameterBag->mRenderX = mParameterBag->mMainDisplayWidth;
 }
 void ReymentaMixnMapApp::setup()
 {
@@ -92,7 +92,8 @@ void ReymentaMixnMapApp::shutdown()
 	// save warp settings
 	fs::path settings = getAssetPath("") / warpsFileName;
 	Warp::writeSettings(mWarps, writeFile(settings));
-
+	// save params
+	mParameterBag->save();
 	// close ui and save settings
 	mSpout->shutdown();
 	mTextures->shutdown();
@@ -138,6 +139,8 @@ void ReymentaMixnMapApp::draw()
 	int i = 0;
 	for (auto &warp : mWarps)
 	{
+
+		//warp->setSize(ivec2(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getWidth(), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getHeight()));
 		warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
 		i++;
 	}

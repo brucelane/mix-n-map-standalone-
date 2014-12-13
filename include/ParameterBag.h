@@ -53,6 +53,7 @@ namespace Reymenta {
 		vec2						mRenderResoXY;
 		ivec2						mRenderResolution;        // render resolution (replaces iResolution which increments magically)
 		vec2						mPreviewFragXY;
+		bool						mAutoLayout;
 
 		// windows and params
 		bool						mShowConsole;

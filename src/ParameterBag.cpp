@@ -31,7 +31,7 @@ ParameterBagRef ParameterBag::create()
 
 bool ParameterBag::save()
 {
-	// attempt to create "reymenta" directory in Documents directory
+	// save in assets folder
 	fs::path directory = getAssetPath("");
 	if (!fs::exists(directory)) {
 		if (!createDirectories(directory / settingsFileName)) {
@@ -50,6 +50,30 @@ bool ParameterBag::save()
 	XmlTree UseDX9("UseDX9", "");
 	UseDX9.setAttribute("value", toString(mUseDX9));
 	settings.push_back(UseDX9);
+
+	XmlTree OSCReceiverPort("OSCReceiverPort", "");
+	OSCReceiverPort.setAttribute("value", toString(mOSCReceiverPort));
+	settings.push_back(OSCReceiverPort);
+
+	XmlTree AutoLayout("AutoLayout", "");
+	AutoLayout.setAttribute("value", toString(mAutoLayout));
+	settings.push_back(AutoLayout);
+
+	XmlTree RenderWidth("RenderWidth", "");
+	RenderWidth.setAttribute("value", toString(mRenderWidth));
+	settings.push_back(RenderWidth);
+
+	XmlTree RenderHeight("RenderHeight", "");
+	RenderHeight.setAttribute("value", toString(mRenderHeight));
+	settings.push_back(RenderHeight);
+
+	XmlTree RenderX("RenderX", "");
+	RenderX.setAttribute("value", toString(mRenderX));
+	settings.push_back(RenderX);
+
+	XmlTree RenderY("RenderY", "");
+	RenderY.setAttribute("value", toString(mRenderY));
+	settings.push_back(RenderY);
 
 	// TODO: test for successful writing of XML
 	settings.write(writeFile(path));
@@ -79,7 +103,35 @@ bool ParameterBag::restore()
 				XmlTree UseDX9 = settings.getChild("UseDX9");
 				mUseDX9 = UseDX9.getAttributeValue<bool>("value");
 			}
+			if (settings.hasChild("OSCReceiverPort")) {
+				XmlTree OSCReceiverPort = settings.getChild("OSCReceiverPort");
+				mOSCReceiverPort = OSCReceiverPort.getAttributeValue<int>("value");
+			}
+			if (settings.hasChild("AutoLayout")) {
+				XmlTree AutoLayout = settings.getChild("AutoLayout");
+				mAutoLayout = AutoLayout.getAttributeValue<bool>("value");
+			}
+			// if AutoLayout is false we have to read the custom screen layout
+			if (!mAutoLayout)
+			{
+				if (settings.hasChild("RenderWidth")) {
+					XmlTree RenderWidth = settings.getChild("RenderWidth");
+					mRenderWidth = RenderWidth.getAttributeValue<int>("value");
+				}
+				if (settings.hasChild("RenderHeight")) {
+					XmlTree RenderHeight = settings.getChild("RenderHeight");
+					mRenderHeight = RenderHeight.getAttributeValue<int>("value");
+				}
+				if (settings.hasChild("RenderX")) {
+					XmlTree RenderX = settings.getChild("RenderX");
+					mRenderX = RenderX.getAttributeValue<int>("value");
+				}
+				if (settings.hasChild("RenderY")) {
+					XmlTree RenderY = settings.getChild("RenderY");
+					mRenderY = RenderY.getAttributeValue<int>("value");
+				}
 
+			}
 			return true;
 		}
 	}
@@ -91,6 +143,7 @@ bool ParameterBag::restore()
 
 void ParameterBag::reset()
 {
+	mAutoLayout = true;
 	mRenderWidth = 1024;
 	mRenderHeight = 768;
 	mRenderXY = mLeftRenderXY = mRightRenderXY = mPreviewRenderXY = vec2(0.0);
@@ -151,7 +204,7 @@ void ParameterBag::reset()
 
 	// fbo
 	mFboWidth = 640;
-	mFboHeight = 360;
+	mFboHeight = 480;
 	mPreviewWidth = 156;
 	mPreviewHeight = 88;
 	mCurrentShadaFboIndex = 0;
@@ -172,7 +225,7 @@ void ParameterBag::reset()
 	for (int a = 0; a < 8; a++)
 	{
 		iChannels[a] = a;
-		iWarpFboChannels[a] = a;
+		iWarpFboChannels[a] = 0;
 	}
 
 	// midi and OSC

@@ -110,8 +110,6 @@ namespace Reymenta
 		gl::TextureRef				startupImage;
 		//! fboFormat
 		gl::Fbo::Format				fboFormat;
-		//! mixTextures: mix of 2 textures from sTextures or shaders
-		//vector<ci::gl::TextureRef>	mixTextures;
 		//! check if valid index
 		int							checkedIndex(int index);
 		//! parameters
@@ -127,6 +125,7 @@ namespace Reymenta
 		int							selectedShada;
 		//! inputTextures: vector of Spout received textures
 		vector<Sender>				inputTextures;
+		bool						inputReceived;
 		int							selectedInputTexture;
 		//! select mode for routing from texture or shader to the mixing (0 for input texture, 1 for shader)
 		unsigned int				currentMode;

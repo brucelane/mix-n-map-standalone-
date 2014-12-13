@@ -129,6 +129,11 @@ void ReymentaMixnMapApp::draw()
 	// clear the window and set the drawing color to white
 	gl::clear();
 	gl::color(Color::white());
+
+	// draw textures
+	mSpout->draw();
+	mTextures->draw();
+
 	// iterate over the warps and draw their content
 	int i = 0;
 	for (auto &warp : mWarps)
@@ -140,6 +145,7 @@ void ReymentaMixnMapApp::draw()
 
 void ReymentaMixnMapApp::resize()
 {
+	mShaders->resize();
 	// tell the warps our window has been resized, so they properly scale up or down
 	Warp::handleResize(mWarps);
 }

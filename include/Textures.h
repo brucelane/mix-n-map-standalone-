@@ -96,7 +96,7 @@ namespace Reymenta
 		void						setShadaIndex(int index);
 		void						setInputTextureIndex(int index);
 		int							getInputTextureIndex() { return selectedInputTexture; };
-		WarpInput					setInput(int index, bool left);
+		WarpInput					setInput(int index, bool left, int currentMode);
 		int							getShadaFbosSize() { return mShadaFbos.size(); };
 		int							addShadaFbo();
 		void						createWarpInput();
@@ -127,8 +127,6 @@ namespace Reymenta
 		vector<Sender>				inputTextures;
 		bool						inputReceived;
 		int							selectedInputTexture;
-		//! select mode for routing from texture or shader to the mixing (0 for input texture, 1 for shader)
-		unsigned int				currentMode;
 		//! mesh for shader drawing
 		gl::VboMeshRef				mMesh;
 

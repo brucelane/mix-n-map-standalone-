@@ -38,7 +38,6 @@ Textures::Textures(ParameterBagRef aParameterBag, ShadersRef aShadersRef)
 	mMesh = gl::VboMesh::create(geom::Rect(Rectf(-2.0, -2.0, 2.0, 2.0)));
 	selectedShada = 0;
 	selectedInputTexture = 0;
-	currentMode = 0;
 
 	log->logTimedString("Textures constructor end");
 }
@@ -56,18 +55,16 @@ void Textures::createWarpInput()
 }
 void Textures::setShadaIndex(int index) 
 { 
-	currentMode = 1; 
 	log->logTimedString("setShadaIndex:" + toString(index)); 
 	selectedShada = index; 
 }
 void Textures::setInputTextureIndex(int index) 
 { 
-	currentMode = 0; 
 	log->logTimedString("setInputTextureIndex:" + toString(index)); 
 	selectedInputTexture = index; 
 }
 
-WarpInput Textures::setInput(int index, bool left)
+WarpInput Textures::setInput(int index, bool left, int currentMode)
 { 
 	string name;
 	if (currentMode == 0)

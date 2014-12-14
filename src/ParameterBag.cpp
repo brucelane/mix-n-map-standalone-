@@ -51,10 +51,6 @@ bool ParameterBag::save()
 	UseDX9.setAttribute("value", toString(mUseDX9));
 	settings.push_back(UseDX9);
 
-	XmlTree OSCReceiverPort("OSCReceiverPort", "");
-	OSCReceiverPort.setAttribute("value", toString(mOSCReceiverPort));
-	settings.push_back(OSCReceiverPort);
-
 	XmlTree AutoLayout("AutoLayout", "");
 	AutoLayout.setAttribute("value", toString(mAutoLayout));
 	settings.push_back(AutoLayout);
@@ -74,6 +70,18 @@ bool ParameterBag::save()
 	XmlTree RenderY("RenderY", "");
 	RenderY.setAttribute("value", toString(mRenderY));
 	settings.push_back(RenderY);
+
+	XmlTree OSCReceiverPort("OSCReceiverPort", "");
+	OSCReceiverPort.setAttribute("value", toString(mOSCReceiverPort));
+	settings.push_back(OSCReceiverPort);
+
+	XmlTree OSCDestinationPort("OSCDestinationPort", "");
+	OSCDestinationPort.setAttribute("value", toString(mOSCDestinationPort));
+	settings.push_back(OSCDestinationPort);
+
+	XmlTree OSCDestinationHost("OSCDestinationHost", "");
+	OSCDestinationHost.setAttribute("value", toString(mOSCDestinationHost));
+	settings.push_back(OSCDestinationHost);
 
 	// TODO: test for successful writing of XML
 	settings.write(writeFile(path));
@@ -110,6 +118,18 @@ bool ParameterBag::restore()
 			if (settings.hasChild("AutoLayout")) {
 				XmlTree AutoLayout = settings.getChild("AutoLayout");
 				mAutoLayout = AutoLayout.getAttributeValue<bool>("value");
+			}
+			if (settings.hasChild("OSCReceiverPort")) {
+				XmlTree OSCReceiverPort = settings.getChild("OSCReceiverPort");
+				mOSCReceiverPort = OSCReceiverPort.getAttributeValue<int>("value");
+			}
+			if (settings.hasChild("OSCDestinationPort")) {
+				XmlTree OSCDestinationPort = settings.getChild("OSCDestinationPort");
+				mOSCDestinationPort = OSCDestinationPort.getAttributeValue<int>("value");
+			}
+			if (settings.hasChild("OSCDestinationHost")) {
+				XmlTree OSCDestinationHost = settings.getChild("OSCDestinationHost");
+				mOSCDestinationHost = OSCDestinationHost.getAttributeValue<string>("value");
 			}
 			// if AutoLayout is false we have to read the custom screen layout
 			if (!mAutoLayout)
@@ -225,7 +245,7 @@ void ParameterBag::reset()
 	for (int a = 0; a < 8; a++)
 	{
 		iChannels[a] = a;
-		iWarpFboChannels[a] = 0;
+		iWarpFboChannels[a] = a;
 	}
 
 	// midi and OSC

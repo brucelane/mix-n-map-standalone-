@@ -121,7 +121,7 @@ namespace Reymenta {
 		bool						mMemoryMode;			// tells us if texture share compatible
 		bool						mUseDX9;				// use DirectX 9 mode, should not be set to true, unless old beta of Spout
 	private:
-		const string settingsFileName = "MixnMapSettings.xml";
+		const string settingsFileName = "MixnMapStandaloneSettings.xml";
 	};
 
 }

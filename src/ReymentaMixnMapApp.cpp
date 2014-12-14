@@ -62,7 +62,7 @@ void ReymentaMixnMapApp::setup()
 	// instanciate the spout class
 	mSpout = SpoutWrapper::create(mParameterBag, mTextures);
 	// instanciate the OSC class
-	mOSC = OSC::create(mParameterBag);
+	mOSC = OSC::create(mParameterBag, mShaders, mTextures);
 
 	updateWindowTitle();
 

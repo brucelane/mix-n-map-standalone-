@@ -9,6 +9,8 @@
 #include "Shaders.h"
 // textures
 #include "Textures.h"
+// Warps
+#include "WarpWrapper.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -23,8 +25,8 @@ namespace Reymenta
 	{
 
 	public:
-		OSC(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures);
-		static	OSCRef create(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures);
+		OSC(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures, WarpWrapperRef aWarpings);
+		static	OSCRef create(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures, WarpWrapperRef aWarpings);
 
 		void	update();
 	private:
@@ -34,6 +36,8 @@ namespace Reymenta
 		ShadersRef					mShaders;
 		// textures
 		TexturesRef					mTextures;
+		// warps
+		WarpWrapperRef				mWarpings;
 
 		osc::Listener 				mOSCReceiver;
 		osc::Sender					mOSCSender;

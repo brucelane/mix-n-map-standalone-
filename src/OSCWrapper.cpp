@@ -2,20 +2,21 @@
 
 using namespace Reymenta;
 
-OSC::OSC(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures)
+OSC::OSC(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures, WarpWrapperRef aWarpings)
 {
 	mParameterBag = aParameterBag;
 	mShaders = aShadersRef;
 	mTextures = aTextures;
+	mWarpings = aWarpings;
 	// OSC sender
 	//mOSCSender.setup(mParameterBag->mOSCDestinationHost, mParameterBag->mOSCDestinationPort);
 	// OSC receiver
 	mOSCReceiver.setup(mParameterBag->mOSCReceiverPort);
 }
 
-OSCRef OSC::create(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures)
+OSCRef OSC::create(ParameterBagRef aParameterBag, ShadersRef aShadersRef, TexturesRef aTextures, WarpWrapperRef aWarpings)
 {
-	return shared_ptr<OSC>(new OSC(aParameterBag, aShadersRef, aTextures));
+	return shared_ptr<OSC>(new OSC(aParameterBag, aShadersRef, aTextures, aWarpings));
 }
 
 void OSC::update()
@@ -96,7 +97,7 @@ void OSC::update()
 		}
 		else if (oscAddress == "/createwarps")
 		{
-			mWarps->create(arg0);
+			mWarpings->create(arg0);
 
 		}
 		else if (oscAddress == "/midi")

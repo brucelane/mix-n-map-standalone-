@@ -61,47 +61,23 @@ void ReymentaMixnMapApp::setup()
 	mTextures = Textures::create(mParameterBag, mShaders);
 	// instanciate the spout class
 	mSpout = SpoutWrapper::create(mParameterBag, mTextures);
+	// instanciate the Warps class
+	mWarpings = WarpWrapper::create(mParameterBag, mTextures, mShaders);
 	// instanciate the OSC class
-	mOSC = OSC::create(mParameterBag, mShaders, mTextures);
+	mOSC = OSC::create(mParameterBag, mShaders, mTextures, mWarpings);
 
 	updateWindowTitle();
-
-	//mImage = gl::Texture::create( loadImage( loadAsset( "help.png" ) ), gl::Texture2d::Format().loadTopDown() );
-
-	// initialize warps
-	log->logTimedString("Loading MixnMapWarps.xml");
-	fs::path settings = getAssetPath("") / warpsFileName;
-	if (fs::exists(settings))
-	{
-		// load warp settings from file if one exists
-		mWarps = Warp::readSettings(loadFile(settings));
-	}
-	else
-	{
-		// otherwise create a warp from scratch
-		mWarps.push_back(WarpPerspectiveBilinear::create());
-	}
-	for (auto &warp : mWarps)
-	{
-		mTextures->createWarpInput();
-	}
-	// adjust the content size of the warps
-	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
-	log->logTimedString("Warps count " + toString(mWarps.size()));
-
 }
 
 void ReymentaMixnMapApp::shutdown()
 {
 	// save warp settings
-	fs::path settings = getAssetPath("") / warpsFileName;
-	Warp::writeSettings(mWarps, writeFile(settings));
+	mWarpings->save();
 	// save params
 	mParameterBag->save();
 	// close ui and save settings
 	mSpout->shutdown();
 	mTextures->shutdown();
-
 }
 
 void ReymentaMixnMapApp::update()
@@ -138,100 +114,45 @@ void ReymentaMixnMapApp::draw()
 	// draw textures
 	mSpout->draw();
 	mTextures->draw();
+	mWarpings->draw();
 
-	// iterate over the warps and draw their content
-	int i = 0;
-	for (auto &warp : mWarps)
-	{
-
-		//warp->setSize(ivec2(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getWidth(), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getHeight()));
-		warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
-		i++;
-	}
 }
 
 void ReymentaMixnMapApp::resize()
 {
 	mShaders->resize();
 	// tell the warps our window has been resized, so they properly scale up or down
-	Warp::handleResize(mWarps);
+	mWarpings->resize();
 }
 
 void ReymentaMixnMapApp::mouseMove(MouseEvent event)
 {
-	// pass this mouse event to the warp editor first
-	if (!Warp::handleMouseMove(mWarps, event)) {
-		// let your application perform its mouseMove handling here
-	}
+	mWarpings->mouseMove(event);
 }
 
 void ReymentaMixnMapApp::mouseDown(MouseEvent event)
 {
-	// pass this mouse event to the warp editor first
-	if (!Warp::handleMouseDown(mWarps, event)) {
-		// let your application perform its mouseDown handling here
-	}
+	mWarpings->mouseDown(event);
 }
 
 void ReymentaMixnMapApp::mouseDrag(MouseEvent event)
 {
-	// pass this mouse event to the warp editor first
-	if (!Warp::handleMouseDrag(mWarps, event)) {
-		// let your application perform its mouseDrag handling here
-	}
+	mWarpings->mouseDrag(event);
 }
 
 void ReymentaMixnMapApp::mouseUp(MouseEvent event)
 {
-	// pass this mouse event to the warp editor first
-	if (!Warp::handleMouseUp(mWarps, event)) {
-		// let your application perform its mouseUp handling here
-	}
+	mWarpings->mouseUp(event);
 }
 
 void ReymentaMixnMapApp::keyDown(KeyEvent event)
 {
-	// pass this key event to the warp editor first
-	if (!Warp::handleKeyDown(mWarps, event)) {
-		// warp editor did not handle the key, so handle it here
-		switch (event.getCode()) {
-		case KeyEvent::KEY_ESCAPE:
-			// quit the application
-			quit();
-			break;
-		case KeyEvent::KEY_n:
-			// create a warp
-			mWarps.push_back(WarpPerspectiveBilinear::create());
-			break;
-		case KeyEvent::KEY_f:
-			// toggle full screen
-			setFullScreen(!isFullScreen());
-			break;
-		case KeyEvent::KEY_w:
-			// toggle warp edit mode
-			Warp::enableEditMode(!Warp::isEditModeEnabled());
-			break;
-		case KeyEvent::KEY_h:
-			hideCursor();
-			break;
-		case KeyEvent::KEY_s:
-			showCursor();
-			break;
-		case KeyEvent::KEY_SPACE:
-			// save warp settings
-			fs::path settings = getAssetPath("") / warpsFileName;
-			Warp::writeSettings(mWarps, writeFile(settings));
-			break;
-		}
-	}
+	mWarpings->keyDown(event);
 }
 
 void ReymentaMixnMapApp::keyUp(KeyEvent event)
 {
-	// pass this key event to the warp editor first
-	if (!Warp::handleKeyUp(mWarps, event)) {
-		// let your application perform its keyUp handling here
-	}
+	mWarpings->keyUp(event);
 }
 
 void ReymentaMixnMapApp::updateWindowTitle()

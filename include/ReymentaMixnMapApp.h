@@ -25,9 +25,6 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 
-#include "WarpBilinear.h"
-#include "WarpPerspective.h"
-#include "WarpPerspectiveBilinear.h"
 // parameters
 #include "ParameterBag.h"
 // textures
@@ -38,6 +35,8 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 #include "SpoutWrapper.h"
 // OSC
 #include "OSCWrapper.h"
+// Warps
+#include "WarpWrapper.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -79,8 +78,7 @@ private:
 	// osc
 	OSCRef						mOSC;
 	// warps
-	const string				warpsFileName = "MixnMapWarps.xml";
-	WarpList					mWarps;
+	WarpWrapperRef				mWarpings;
 
 	void						getWindowsResolution();
 };

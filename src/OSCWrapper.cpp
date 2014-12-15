@@ -97,7 +97,7 @@ void OSC::update()
 		}
 		else if (oscAddress == "/createwarps")
 		{
-			mWarpings->create(arg0);
+			mWarpings->createWarps(arg0);
 
 		}
 		else if (oscAddress == "/midi")

@@ -46,7 +46,7 @@ namespace Reymenta
 		void						keyDown( KeyEvent event );
 		void						keyUp( KeyEvent event );
 		void						draw();
-
+		void						createWarps(int count);
 	private:
 		// Logger
 		LoggerRef					log;	

@@ -32,6 +32,18 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
 }
+void WarpWrapper::createWarps(int count)
+{
+	if (count > mWarps.size())
+	{
+		for (int i = mWarps.size(); i < count; i++)
+		{
+			mWarps.push_back(WarpPerspectiveBilinear::create());
+			mTextures->createWarpInput();
+		}
+	}
+}
+
 void WarpWrapper::save()
 {
 	fs::path settings = getAssetPath("") / warpsFileName;

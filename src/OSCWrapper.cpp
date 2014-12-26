@@ -122,7 +122,7 @@ void OSC::update()
 			}
 		}
 
-		string oscString = "osc from:" + message.getRemoteIp() + " adr:" + oscAddress + " 0: " + oscArg0 + " 1: " + oscArg1;
+		string oscString = "osc from:" + message.getRemoteIp() + " adr:" + oscAddress + " 0: " + oscArg0 + " 1: " + oscArg1 + " 2: " + oscArg2 + " 3: " + oscArg3;
 		mParameterBag->OSCMsg = oscString;
 	}
 }

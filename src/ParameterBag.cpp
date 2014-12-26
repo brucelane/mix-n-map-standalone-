@@ -232,7 +232,8 @@ void ParameterBag::reset()
 	mLeftFboIndex = 2;
 	mRightFboIndex = 3;
 
-	mWarpCount = 3;
+	selectedWarp = 0;
+
 	// OSC
 	mOSCDestinationHost = "127.0.0.1";
 	mOSCDestinationPort = 5005;

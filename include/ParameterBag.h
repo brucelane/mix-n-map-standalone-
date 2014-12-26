@@ -79,9 +79,10 @@ namespace Reymenta {
 		map<int, int>				iChannels;
 		// fbo indexes for warping
 		map<int, int>				iWarpFboChannels;
+		int							selectedWarp;
+
 		// fbos
 		int							mFboWidth, mFboHeight;
-		int							mWarpCount;
 		int							mCurrentShadaFboIndex;
 		int							mMixFboIndex;
 		int							mLeftFboIndex, mRightFboIndex;
@@ -121,7 +122,7 @@ namespace Reymenta {
 		bool						mMemoryMode;			// tells us if texture share compatible
 		bool						mUseDX9;				// use DirectX 9 mode, should not be set to true, unless old beta of Spout
 	private:
-		const string settingsFileName = "MixnMapStandaloneSettings.xml";
+		const string settingsFileName = "MixnMapSettings.xml";
 	};
 
 }

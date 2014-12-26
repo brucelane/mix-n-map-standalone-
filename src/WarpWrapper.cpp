@@ -31,7 +31,6 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 	// adjust the content size of the warps
 	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
-	selectedWarp = 0;
 
 }
 void WarpWrapper::createWarps(int count)
@@ -138,7 +137,6 @@ void WarpWrapper::keyDown(KeyEvent event)
 			// select warp
 			setSelectedWarp(8);
 			break;
-
 		case KeyEvent::KEY_w:
 			// toggle warp edit mode
 			Warp::enableEditMode(!Warp::isEditModeEnabled());
@@ -146,6 +144,9 @@ void WarpWrapper::keyDown(KeyEvent event)
 		case KeyEvent::KEY_SPACE:
 			// save warp settings
 			save();
+			// save params
+			mParameterBag->save();
+
 			break;
 		}
 	}

@@ -47,9 +47,9 @@ namespace Reymenta
 		void						keyUp( KeyEvent event );
 		void						draw();
 		void						createWarps(int count);
-		void						setSelectedWarp(int index) { selectedWarp = min((int)mWarps.size(), index); };
-		void						setChannelForSelectedWarp(int index) { mParameterBag->iWarpFboChannels[selectedWarp] = index; };
-		int							getSelectedWarp() { return selectedWarp; };
+		void						setSelectedWarp(int index) { mParameterBag->selectedWarp = min((int)mWarps.size(), index); };
+		void						setChannelForSelectedWarp(int index) { mParameterBag->iWarpFboChannels[mParameterBag->selectedWarp] = index; };
+		int							getSelectedWarp() { return mParameterBag->selectedWarp; };
 	private:
 		// Logger
 		LoggerRef					log;	
@@ -62,6 +62,5 @@ namespace Reymenta
 
 		const string				warpsFileName = "MixnMapWarps.xml";
 		WarpList					mWarps;
-		int							selectedWarp;
 	};
 }

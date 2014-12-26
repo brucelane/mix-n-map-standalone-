@@ -49,6 +49,7 @@ void Textures::createWarpInput()
 	newWarpInput.rightIndex = 0;
 	newWarpInput.rightMode = 0;
 	newWarpInput.iCrossfade = 0.5;
+	newWarpInput.hasTexture = false;
 	warpInputs.push_back(newWarpInput);
 	// init mixTextures
 	mMixesFbos.push_back(gl::Fbo::create(mParameterBag->mFboWidth, mParameterBag->mFboHeight, fboFormat.depthTexture()));
@@ -69,39 +70,69 @@ WarpInput Textures::setInput(int index, bool left, int currentMode)
 	string name;
 	if (currentMode == 0)
 	{
+		selectedInputTexture = index;
 		// 0 = input texture mode
 		name = "T" + toString(selectedInputTexture);
 		if (left)
 		{
-			warpInputs[index].leftIndex = selectedInputTexture;
-			warpInputs[index].leftMode = 0; // 0 for input texture
+			warpInputs[mParameterBag->selectedWarp].leftIndex = selectedInputTexture;
+			warpInputs[mParameterBag->selectedWarp].leftMode = 0; // 0 for input texture
+			if (!warpInputs[mParameterBag->selectedWarp].hasTexture)
+			{
+				// put texture on both sides
+				warpInputs[mParameterBag->selectedWarp].hasTexture = true;
+				warpInputs[mParameterBag->selectedWarp].rightIndex = selectedInputTexture;
+				warpInputs[mParameterBag->selectedWarp].rightMode = 0; // 0 for input texture
+			}
 		}
 		else
 		{
-			warpInputs[index].rightIndex = selectedInputTexture;
-			warpInputs[index].rightMode = 0; // 0 for input texture
+			warpInputs[mParameterBag->selectedWarp].rightIndex = selectedInputTexture;
+			warpInputs[mParameterBag->selectedWarp].rightMode = 0; // 0 for input texture
+			if (!warpInputs[mParameterBag->selectedWarp].hasTexture)
+			{
+				// put texture on both sides
+				warpInputs[mParameterBag->selectedWarp].hasTexture = true;
+				warpInputs[mParameterBag->selectedWarp].leftIndex = selectedInputTexture;
+				warpInputs[mParameterBag->selectedWarp].leftMode = 0; // 0 for input texture
+			}
 		}
 	}
 	else
 	{
 		// 1 = shader mode
+		selectedShada = index;
 		//??? mShadaFbos[index].shadaIndex = selectedShada;
 		name = "S" + toString(selectedShada);
 		if (left)
 		{
-			warpInputs[index].leftIndex = selectedShada;
-			warpInputs[index].leftMode = 1; // 1 for shader
-
+			warpInputs[mParameterBag->selectedWarp].leftIndex = selectedShada;
+			warpInputs[mParameterBag->selectedWarp].leftMode = 1; // 1 for shader
+			if (!warpInputs[mParameterBag->selectedWarp].hasTexture)
+			{
+				// put texture on both sides
+				warpInputs[mParameterBag->selectedWarp].hasTexture = true;
+				warpInputs[mParameterBag->selectedWarp].rightIndex = selectedShada;
+				warpInputs[mParameterBag->selectedWarp].rightMode = 1; // 1 for shader
+			}
 		}
 		else
 		{
-			warpInputs[index].rightIndex = selectedShada;
-			warpInputs[index].rightMode = 1; // 1 for shader
+			warpInputs[mParameterBag->selectedWarp].rightIndex = selectedShada;
+			warpInputs[mParameterBag->selectedWarp].rightMode = 1; // 1 for shader
+			if (!warpInputs[mParameterBag->selectedWarp].hasTexture)
+			{
+				// put texture on both sides
+				warpInputs[mParameterBag->selectedWarp].hasTexture = true;
+				warpInputs[mParameterBag->selectedWarp].leftIndex = selectedShada;
+				warpInputs[mParameterBag->selectedWarp].leftMode = 1; // 1 for shader
+			}
 
 		}
 	}
-	return warpInputs[index];
-};
+	log->logTimedString(name + " on selected warp: " + toString(mParameterBag->selectedWarp));
+	return warpInputs[mParameterBag->selectedWarp];
+}
 
 int Textures::addShadaFbo()
 {

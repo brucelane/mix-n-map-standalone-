@@ -58,10 +58,11 @@ namespace Reymenta
 	struct WarpInput
 	{
 		int							leftIndex;
-		int							leftMode; // 0 for input texture, 1 for shader
+		int							leftMode;		// 0 for input texture, 1 for shader
 		int							rightIndex;
-		int							rightMode; // 0 for input texture, 1 for shader
-		float						iCrossfade;  // from 0 left to 1 right
+		int							rightMode;		// 0 for input texture, 1 for shader
+		float						iCrossfade;		// from 0 left to 1 right
+		bool						hasTexture;		// has already a texture? if not the first one is put on left and right
 	};
 	class Textures {
 	public:		

@@ -115,6 +115,15 @@ void ReymentaMixnMapApp::draw()
 	mSpout->draw();
 	mTextures->draw();
 	mWarpings->draw();
+	// Show the user what it is receiving
+	gl::enableAlphaBlending();
+	char txtReceiver[256];
+	sprintf_s(txtReceiver, "Received:", mParameterBag->OSCMsg);
+	gl::drawString(txtReceiver, vec2(toPixels(20), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
+	sprintf_s(txtReceiver, "fps : %2.2d", (int)getAverageFps());
+	gl::drawString(txtReceiver, vec2(getWindowWidth() - toPixels(100), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
+	gl::drawString("RH click to select a sender", vec2(toPixels(20), getWindowHeight() - toPixels(80)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
+	gl::disableAlphaBlending();
 
 }
 
@@ -148,6 +157,13 @@ void ReymentaMixnMapApp::mouseUp(MouseEvent event)
 void ReymentaMixnMapApp::keyDown(KeyEvent event)
 {
 	mWarpings->keyDown(event);
+	switch (event.getCode())
+	{
+	case KeyEvent::KEY_ESCAPE:
+		// quit the application
+		quit();
+		break;
+	}
 }
 
 void ReymentaMixnMapApp::keyUp(KeyEvent event)

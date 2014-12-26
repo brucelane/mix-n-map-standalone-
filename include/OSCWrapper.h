@@ -31,7 +31,7 @@ namespace Reymenta
 		void	update();
 	private:
 		//! parameters
-		ParameterBagRef mParameterBag;
+		ParameterBagRef				mParameterBag;
 		//! Shaders
 		ShadersRef					mShaders;
 		// textures
@@ -41,5 +41,9 @@ namespace Reymenta
 
 		osc::Listener 				mOSCReceiver;
 		osc::Sender					mOSCSender;
+		int							iargs[4];
+		float						fargs[4];
+		string						sargs[4];
+
 	};
 }

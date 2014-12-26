@@ -30,35 +30,36 @@ namespace Reymenta
 	typedef std::shared_ptr<class WarpWrapper> WarpWrapperRef;
 
 	class WarpWrapper {
-	public:		
+	public:
 		WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef, ShadersRef aShadersRef);
 		virtual					~WarpWrapper();
 		static WarpWrapperRef	create(ParameterBagRef aParameterBag, TexturesRef aTexturesRef, ShadersRef aShadersRef)
 		{
-			return shared_ptr<WarpWrapper>(new WarpWrapper( aParameterBag, aTexturesRef, aShadersRef));
+			return shared_ptr<WarpWrapper>(new WarpWrapper(aParameterBag, aTexturesRef, aShadersRef));
 		}
 		void						save();
 		void						resize();
-		void						mouseMove( MouseEvent event );
-		void						mouseDown( MouseEvent event );
-		void						mouseDrag( MouseEvent event );
-		void						mouseUp( MouseEvent event );
-		void						keyDown( KeyEvent event );
-		void						keyUp( KeyEvent event );
+		void						mouseMove(MouseEvent event);
+		void						mouseDown(MouseEvent event);
+		void						mouseDrag(MouseEvent event);
+		void						mouseUp(MouseEvent event);
+		void						keyDown(KeyEvent event);
+		void						keyUp(KeyEvent event);
 		void						draw();
 		void						createWarps(int count);
 		void						setSelectedWarp(int index) { mParameterBag->selectedWarp = min((int)mWarps.size(), index); };
 		void						setChannelForSelectedWarp(int index) { mParameterBag->iWarpFboChannels[mParameterBag->selectedWarp] = index; };
+		void						setCrossfadeForSelectedWarp(float value) { mTextures->setCrossfade(value); };
 		int							getSelectedWarp() { return mParameterBag->selectedWarp; };
 	private:
 		// Logger
-		LoggerRef					log;	
+		LoggerRef					log;
 		// Parameters
 		ParameterBagRef				mParameterBag;
 		// Shaders
 		ShadersRef					mShaders;
 		// Textures
-		TexturesRef					mTextures;	
+		TexturesRef					mTextures;
 
 		const string				warpsFileName = "MixnMapWarps.xml";
 		WarpList					mWarps;

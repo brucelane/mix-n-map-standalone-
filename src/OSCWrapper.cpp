@@ -26,17 +26,15 @@ void OSC::update()
 	{
 		osc::Message message;
 		mOSCReceiver.getNextMessage(&message);
-		int arg0 = 0;
-		int arg1 = 0;
-		int arg2 = 0;
-		int arg3 = 0;
+		for (int a = 0; a < 4; a++)
+		{
+			iargs[a] = 0;
+			fargs[a] = 0.0;
+			sargs[a] = "";
+		}
 		int skeletonIndex = 0;
 		int jointIndex = 0;
 		string oscAddress = message.getAddress();
-		string oscArg0 = "";
-		string oscArg1 = "";
-		string oscArg2 = "";
-		string oscArg3 = "";
 
 		int numArgs = message.getNumArgs();
 		// get arguments
@@ -44,39 +42,29 @@ void OSC::update()
 			cout << "-- Argument " << i << std::endl;
 			cout << "---- type: " << message.getArgTypeName(i) << std::endl;
 			if (message.getArgType(i) == osc::TYPE_INT32) {
-				try {
-					//cout << "------ int value: "<< message.getArgAsInt32(i) << std::endl;
-					if (i == 0)
-					{
-						arg0 = message.getArgAsInt32(i);
-						oscArg0 = toString(message.getArgAsInt32(i));
-					}
-					if (i == 1)
-					{
-						arg1 = message.getArgAsInt32(i);
-						oscArg1 = toString(message.getArgAsInt32(i));
-					}
-					if (i == 2)
-					{
-						arg2 = message.getArgAsInt32(i);
-						oscArg2 = toString(message.getArgAsInt32(i));
-					}
-					if (i == 3)
-					{
-						arg3 = message.getArgAsInt32(i);
-						oscArg3 = toString(message.getArgAsInt32(i));
-					}
+				try 
+				{
+						iargs[i] = message.getArgAsInt32(i);
+						sargs[i] = toString(iargs[i]);
 				}
 				catch (...) {
 					cout << "Exception reading argument as int32" << std::endl;
 				}
 			}
+			if (message.getArgType(i) == osc::TYPE_FLOAT) {
+				try 
+				{
+						fargs[i] = message.getArgAsFloat(i);
+						sargs[i] = toString(fargs[i]);
+				}
+				catch (...) {
+					cout << "Exception reading argument as float" << std::endl;
+				}
+			}
 			if (message.getArgType(i) == osc::TYPE_STRING) {
-				try {
-					if (i == 1)
-					{
-						oscArg1 = message.getArgAsString(i);
-					}
+				try
+				{
+						sargs[i] = message.getArgAsString(i);
 				}
 				catch (...) {
 					cout << "Exception reading argument as string" << std::endl;
@@ -87,42 +75,46 @@ void OSC::update()
 		// route the OSC commands
 		if (oscAddress == "/fspath")
 		{
-			mShaders->loadPixelFragmentShader(oscArg1);
+			mShaders->loadPixelFragmentShader(sargs[1]);
 			mTextures->addShadaFbo();
 		}
 		else if (oscAddress == "/texture")
 		{
-			mTextures->setInput(arg0, arg1, arg2);
+			mTextures->setInput(iargs[0], iargs[1], iargs[2]);
 		}
 		else if (oscAddress == "/createwarps")
 		{
-			mWarpings->createWarps(arg0);
+			mWarpings->createWarps(iargs[0]);
 		}
 		else if (oscAddress == "/select")
 		{
-			mWarpings->setSelectedWarp(arg0);
+			mWarpings->setSelectedWarp(iargs[0]);
 		}
 		else if (oscAddress == "/channel")
 		{
-			mWarpings->setChannelForSelectedWarp(arg0);
+			mWarpings->setChannelForSelectedWarp(iargs[0]);
+		}
+		else if (oscAddress == "/crossfade")
+		{
+			mWarpings->setCrossfadeForSelectedWarp(fargs[0]);
 		}
 		else if (oscAddress == "/midi")
 		{
-			if (arg0 < 0) arg0 = 0;
-			if (arg1 < 0) arg1 = 0;
-			if (arg0 > 4096) arg0 = 4096;
-			if (arg1 > 4096) arg1 = 4096;
-			float normalizedValue = lmap<float>(arg1, 0.0, 127.0, 0.0, 1.0);
-			switch (arg0)
+			if (iargs[0] < 0) iargs[0] = 0;
+			if (iargs[1] < 0) iargs[1] = 0;
+			if (iargs[0] > 4096) iargs[0] = 4096;
+			if (iargs[1] > 4096) iargs[1] = 4096;
+			float normalizedValue = lmap<float>(iargs[1], 0.0, 127.0, 0.0, 1.0);
+			switch (iargs[0])
 			{
 			case 15:
 				// crossfade
-				mParameterBag->controlValues[arg0] = normalizedValue;
+				mParameterBag->controlValues[iargs[0]] = normalizedValue;
 				break;
 			}
 		}
 
-		string oscString = "osc from:" + message.getRemoteIp() + " adr:" + oscAddress + " 0: " + oscArg0 + " 1: " + oscArg1 + " 2: " + oscArg2 + " 3: " + oscArg3;
+		string oscString = "osc from:" + message.getRemoteIp() + " adr:" + oscAddress + " 0: " + sargs[0] + " 1: " + sargs[1] + " 2: " + sargs[2] + " 3: " + sargs[3];
 		mParameterBag->OSCMsg = oscString;
 	}
 }

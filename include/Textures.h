@@ -103,7 +103,7 @@ namespace Reymenta
 		void						createWarpInput();
 		//! warpInputs: vector of warp input textures/shader fbo texture
 		vector<WarpInput>			warpInputs;
-
+		void						setCrossfade(int value) { warpInputs[mParameterBag->selectedWarp].iCrossfade = value; };
 	private:
 		//! Logger
 		LoggerRef					log;	

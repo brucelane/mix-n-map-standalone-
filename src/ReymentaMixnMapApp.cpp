@@ -122,7 +122,6 @@ void ReymentaMixnMapApp::draw()
 	gl::drawString(txtReceiver, vec2(toPixels(20), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
 	sprintf_s(txtReceiver, "fps : %2.2d", (int)getAverageFps());
 	gl::drawString(txtReceiver, vec2(getWindowWidth() - toPixels(100), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
-	gl::drawString("RH click to select a sender", vec2(toPixels(20), getWindowHeight() - toPixels(80)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
 	gl::disableAlphaBlending();
 
 }

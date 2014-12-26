@@ -48,6 +48,7 @@ namespace Reymenta
 		void						draw();
 		void						createWarps(int count);
 		void						setSelectedWarp(int index) { selectedWarp = min((int)mWarps.size(), index); };
+		void						setChannelForSelectedWarp(int index) { mParameterBag->iWarpFboChannels[selectedWarp] = index; };
 		int							getSelectedWarp() { return selectedWarp; };
 	private:
 		// Logger

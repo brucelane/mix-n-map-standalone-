@@ -102,6 +102,10 @@ void OSC::update()
 		{
 			mWarpings->setSelectedWarp(arg0);
 		}
+		else if (oscAddress == "/channel")
+		{
+			mWarpings->setChannelForSelectedWarp(arg0);
+		}
 		else if (oscAddress == "/midi")
 		{
 			if (arg0 < 0) arg0 = 0;

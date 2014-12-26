@@ -93,12 +93,14 @@ void OSC::update()
 		else if (oscAddress == "/texture")
 		{
 			mTextures->setInput(arg0, arg1, arg2);
-
 		}
 		else if (oscAddress == "/createwarps")
 		{
 			mWarpings->createWarps(arg0);
-
+		}
+		else if (oscAddress == "/select")
+		{
+			mWarpings->setSelectedWarp(arg0);
 		}
 		else if (oscAddress == "/midi")
 		{

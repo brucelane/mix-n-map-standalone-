@@ -47,6 +47,8 @@ namespace Reymenta
 		void						keyUp( KeyEvent event );
 		void						draw();
 		void						createWarps(int count);
+		void						setSelectedWarp(int index) { selectedWarp = min((int)mWarps.size(), index); };
+		int							getSelectedWarp() { return selectedWarp; };
 	private:
 		// Logger
 		LoggerRef					log;	
@@ -59,5 +61,6 @@ namespace Reymenta
 
 		const string				warpsFileName = "MixnMapWarps.xml";
 		WarpList					mWarps;
+		int							selectedWarp;
 	};
 }

@@ -31,6 +31,8 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 	// adjust the content size of the warps
 	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
+	selectedWarp = 0;
+
 }
 void WarpWrapper::createWarps(int count)
 {
@@ -100,6 +102,42 @@ void WarpWrapper::keyDown(KeyEvent event)
 			// create a warp
 			mWarps.push_back(WarpPerspectiveBilinear::create());
 			break;
+		case KeyEvent::KEY_0:
+			// select warp
+			setSelectedWarp(0);
+			break;
+		case KeyEvent::KEY_1:
+			// select warp
+			setSelectedWarp(1);
+			break;
+		case KeyEvent::KEY_2:
+			// select warp
+			setSelectedWarp(2);
+			break;
+		case KeyEvent::KEY_3:
+			// select warp
+			setSelectedWarp(3);
+			break;
+		case KeyEvent::KEY_4:
+			// select warp
+			setSelectedWarp(4);
+			break;
+		case KeyEvent::KEY_5:
+			// select warp
+			setSelectedWarp(5);
+			break;
+		case KeyEvent::KEY_6:
+			// select warp
+			setSelectedWarp(6);
+			break;
+		case KeyEvent::KEY_7:
+			// select warp
+			setSelectedWarp(7);
+			break;
+		case KeyEvent::KEY_8:
+			// select warp
+			setSelectedWarp(8);
+			break;
 
 		case KeyEvent::KEY_w:
 			// toggle warp edit mode
@@ -127,7 +165,6 @@ void WarpWrapper::draw()
 	int i = 0;
 	for (auto &warp : mWarps)
 	{
-
 		//warp->setSize(ivec2(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getWidth(), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getHeight()));
 		warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
 		i++;

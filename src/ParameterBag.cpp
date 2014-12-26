@@ -236,8 +236,8 @@ void ParameterBag::reset()
 	// OSC
 	mOSCDestinationHost = "127.0.0.1";
 	mOSCDestinationPort = 5005;
-	mOSCReceiverPort = 9009;
-	OSCMsg = "OSC listening on port 9009";
+	mOSCReceiverPort = 7000;
+	OSCMsg = "OSC listening on port 7000";
 	// colors
 	mLockFR = mLockFG = mLockFB = mLockFA = mLockBR = mLockBG = mLockBB = mLockBA = false;
 	tFR = tFG = tFB = tFA = tBR = tBG = tBB = tBA = false;

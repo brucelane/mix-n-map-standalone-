@@ -39,6 +39,8 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 #include "WarpWrapper.h"
 // Utils
 #include "Batchass.h"
+// UserInterface
+#include "imGuiCinder.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -83,4 +85,7 @@ private:
 	WarpWrapperRef				mWarpings;
 	// utils
 	BatchassRef					mBatchass;
+	// log
+	string						mLogMsg;
+	bool						newLogMsg;
 };

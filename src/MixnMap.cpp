@@ -45,6 +45,8 @@ void MixnMap::setup()
 	mWarpings = WarpWrapper::create(mParameterBag, mTextures, mShaders);
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag, mShaders, mTextures, mWarpings);
+	// set ui window and io events callbacks
+	ImGui::setWindow(getWindow());
 
 	updateWindowTitle();
 }
@@ -101,6 +103,95 @@ void MixnMap::draw()
 	gl::drawString(txtReceiver, vec2(toPixels(20), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
 	sprintf_s(txtReceiver, "fps : %2.2d", (int)getAverageFps());
 	gl::drawString(txtReceiver, vec2(getWindowWidth() - toPixels(100), toPixels(40)), Color(1, 1, 1), Font("Verdana", toPixels(24)));
+
+	ImGui::NewFrame();
+
+	// start a new window
+	ImGui::Begin("MixnMap", NULL, ImVec2(500, 600));
+	{
+		// our theme variables
+		static float WindowPadding[2] = { 25, 10 };
+		static float WindowMinSize[2] = { 160, 80 };
+		static float FramePadding[2] = { 4, 4 };
+		static float ItemSpacing[2] = { 10, 5 };
+		static float ItemInnerSpacing[2] = { 5, 5 };
+
+		static float WindowFillAlphaDefault = 0.7;
+		static float WindowRounding = 4;
+		static float TreeNodeSpacing = 22;
+		static float ColumnsMinSpacing = 50;
+		static float ScrollBarWidth = 12;
+
+		if (ImGui::CollapsingHeader("Parameters", "1", true, true))
+		{
+			ImGui::InputInt("OSC receiver port", &mParameterBag->mOSCReceiverPort);
+			// foreground color
+			static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
+			ImGui::ColorEdit4("color", color);
+			mParameterBag->controlValues[1] = color[0];
+			mParameterBag->controlValues[2] = color[1];
+			mParameterBag->controlValues[3] = color[2];
+			mParameterBag->controlValues[4] = color[3];
+			ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], 0.0f, 0.0f, 1.0f), "Red"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.0f, mParameterBag->controlValues[2], 0.0f, 1.0f), "Green"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.0f, 0.0f, mParameterBag->controlValues[3], 1.0f), "Blue"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4]), "Alpha");
+
+			// background color
+			static float backcolor[4] = { mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8] };
+			ImGui::ColorEdit4("back color", backcolor);
+			mParameterBag->controlValues[5] = backcolor[0];
+			mParameterBag->controlValues[6] = backcolor[1];
+			mParameterBag->controlValues[7] = backcolor[2];
+			mParameterBag->controlValues[8] = backcolor[3];
+			ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], 0.0f, 0.0f, 1.0f), "Red"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.0f, mParameterBag->controlValues[6], 0.0f, 1.0f), "Green"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0.0f, 0.0f, mParameterBag->controlValues[7], 1.0f), "Blue"); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "Alpha");
+
+			if (ImGui::Button("Save")) { mParameterBag->save(); }
+
+		}
+		if (ImGui::CollapsingHeader("Log", "2", true, true))
+		{
+			static bool pause;
+			static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
+			static int values_offset = 0;
+			if (!pause)
+			{
+				static float refresh_time = -1.0f;
+				if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
+				{
+					refresh_time = ImGui::GetTime();
+					values[values_offset] = getAverageFps();
+					values_offset = (values_offset + 1) % values.size();
+				}
+			}
+			ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 30));
+
+			ImGui::SameLine(); ImGui::Checkbox("pause", &pause);
+			static ImGuiTextBuffer log;
+			static int lines = 0;
+			ImGui::Text("Buffer contents: %d lines, %d bytes", lines, log.size());
+			if (ImGui::Button("Clear")) { log.clear(); lines = 0; }
+			//ImGui::SameLine();
+
+			if (newLogMsg)
+			{
+				newLogMsg = false;
+				log.append(mLogMsg.c_str());
+				lines++;
+				if (lines > 10) { log.clear(); lines = 0; }
+			}
+			ImGui::BeginChild("Log");
+			ImGui::TextUnformatted(log.begin(), log.end());
+			ImGui::EndChild();
+		}
+	}
+	ImGui::ShowTestWindow();
+	ImGui::End();
+	ImGui::Render();
+
 	gl::disableAlphaBlending();
 
 }

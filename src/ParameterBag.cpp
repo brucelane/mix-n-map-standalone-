@@ -21,7 +21,13 @@ ParameterBag::ParameterBag()
 	// check to see if ReymentaSettings.xml file exists and restore if it does
 	fs::path params = getAssetPath("") / settingsFileName;
 	if (fs::exists(params))
+	{
 		restore();
+	}
+	else
+	{
+		save();
+	}
 }
 
 ParameterBagRef ParameterBag::create()

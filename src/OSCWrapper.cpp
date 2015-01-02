@@ -38,7 +38,8 @@ void OSC::update()
 
 		int numArgs = message.getNumArgs();
 		// get arguments
-		for (int i = 0; i < message.getNumArgs(); i++) {
+		for (int i = 0; i < message.getNumArgs(); i++) 
+		{
 			cout << "-- Argument " << i << std::endl;
 			cout << "---- type: " << message.getArgTypeName(i) << std::endl;
 			if (message.getArgType(i) == osc::TYPE_INT32) {

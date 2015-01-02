@@ -263,8 +263,6 @@ void Textures::saveThumb()
 			mFbo.fbo->unbindFramebuffer();
 			fs::path path = getAssetPath("") / "thumbs" / filename;
 			writeImage(path, ImageSourceRef(fboSurf));
-
-
 			i++;
 		}
 	}

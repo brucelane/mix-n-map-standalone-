@@ -1,6 +1,6 @@
-#include "ReymentaMixnMapApp.h"
+#include "MixnMap.h"
 
-void ReymentaMixnMapApp::prepareSettings(Settings *settings)
+void MixnMap::prepareSettings(Settings *settings)
 {
 	// instanciate the logger class
 	log = Logger::create("MixnMap.txt");
@@ -8,10 +8,12 @@ void ReymentaMixnMapApp::prepareSettings(Settings *settings)
 
 	// parameters
 	mParameterBag = ParameterBag::create();
+	// utils
+	mBatchass = Batchass::create(mParameterBag);
 	// if AutoLayout, try to position the window on the 2nd screen
 	if (mParameterBag->mAutoLayout)
 	{
-		getWindowsResolution();
+		mBatchass->getWindowsResolution();
 	}
 #ifdef _DEBUG
 	// debug mode
@@ -26,32 +28,10 @@ void ReymentaMixnMapApp::prepareSettings(Settings *settings)
 	// set a high frame rate to disable limitation
 	settings->setFrameRate(1000.0f);
 
-	if (mParameterBag->mShowConsole) settings->enableConsoleWindow();
 	log->logTimedString("prepareSettings done");
 }
-void ReymentaMixnMapApp::getWindowsResolution()
-{
-	log->logTimedString("getWindowsResolution");
-	mParameterBag->mDisplayCount = 0;
-	// Display sizes
-	mParameterBag->mMainDisplayWidth = Display::getMainDisplay()->getWidth();
-	mParameterBag->mMainDisplayHeight = Display::getMainDisplay()->getHeight();
-	mParameterBag->mRenderY = 0;
-	for (auto display : Display::getDisplays())
-	{
-		mParameterBag->mDisplayCount++;
-		mParameterBag->mRenderWidth = display->getWidth();
-		mParameterBag->mRenderHeight = display->getHeight();
-		
-		log->logTimedString("Window " + toString(mParameterBag->mDisplayCount) + ": " + toString(mParameterBag->mRenderWidth) + "x" + toString(mParameterBag->mRenderHeight));
-	}
-	log->logTimedString(" mRenderWidth" + toString(mParameterBag->mRenderWidth) + "mRenderHeight" + toString(mParameterBag->mRenderHeight));
-	mParameterBag->mRenderResoXY = vec2(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
 
-	// in case only one screen , render from x = 0
-	if (mParameterBag->mDisplayCount == 1) mParameterBag->mRenderX = 0; else mParameterBag->mRenderX = mParameterBag->mMainDisplayWidth;
-}
-void ReymentaMixnMapApp::setup()
+void MixnMap::setup()
 {
 	log->logTimedString("setup");
 
@@ -69,7 +49,7 @@ void ReymentaMixnMapApp::setup()
 	updateWindowTitle();
 }
 
-void ReymentaMixnMapApp::shutdown()
+void MixnMap::shutdown()
 {
 	// save warp settings
 	mWarpings->save();
@@ -77,10 +57,9 @@ void ReymentaMixnMapApp::shutdown()
 	mParameterBag->save();
 	// close ui and save settings
 	mSpout->shutdown();
-	mTextures->shutdown();
 }
 
-void ReymentaMixnMapApp::update()
+void MixnMap::update()
 {
 	mParameterBag->iChannelTime[0] = getElapsedSeconds();
 	mParameterBag->iChannelTime[1] = getElapsedSeconds() - 1;
@@ -100,12 +79,12 @@ void ReymentaMixnMapApp::update()
 	mTextures->update();
 	//! update shaders (must be after the textures update)
 	mShaders->update();
-	
+
 	mSpout->update();
 	updateWindowTitle();
 }
 
-void ReymentaMixnMapApp::draw()
+void MixnMap::draw()
 {
 	// clear the window and set the drawing color to white
 	gl::clear();
@@ -126,34 +105,34 @@ void ReymentaMixnMapApp::draw()
 
 }
 
-void ReymentaMixnMapApp::resize()
+void MixnMap::resize()
 {
 	mShaders->resize();
 	// tell the warps our window has been resized, so they properly scale up or down
 	mWarpings->resize();
 }
 
-void ReymentaMixnMapApp::mouseMove(MouseEvent event)
+void MixnMap::mouseMove(MouseEvent event)
 {
 	mWarpings->mouseMove(event);
 }
 
-void ReymentaMixnMapApp::mouseDown(MouseEvent event)
+void MixnMap::mouseDown(MouseEvent event)
 {
 	mWarpings->mouseDown(event);
 }
 
-void ReymentaMixnMapApp::mouseDrag(MouseEvent event)
+void MixnMap::mouseDrag(MouseEvent event)
 {
 	mWarpings->mouseDrag(event);
 }
 
-void ReymentaMixnMapApp::mouseUp(MouseEvent event)
+void MixnMap::mouseUp(MouseEvent event)
 {
 	mWarpings->mouseUp(event);
 }
 
-void ReymentaMixnMapApp::keyDown(KeyEvent event)
+void MixnMap::keyDown(KeyEvent event)
 {
 	mWarpings->keyDown(event);
 	switch (event.getCode())
@@ -165,14 +144,14 @@ void ReymentaMixnMapApp::keyDown(KeyEvent event)
 	}
 }
 
-void ReymentaMixnMapApp::keyUp(KeyEvent event)
+void MixnMap::keyUp(KeyEvent event)
 {
 	mWarpings->keyUp(event);
 }
 
-void ReymentaMixnMapApp::updateWindowTitle()
+void MixnMap::updateWindowTitle()
 {
 	getWindow()->setTitle("(" + toString(floor(getAverageFps())) + " fps) Reymenta mix-n-map");
 }
 
-CINDER_APP_NATIVE(ReymentaMixnMapApp, RendererGl)
+CINDER_APP_NATIVE(MixnMap, RendererGl)

@@ -37,6 +37,8 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 #include "OSCWrapper.h"
 // Warps
 #include "WarpWrapper.h"
+// Utils
+#include "Batchass.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -44,7 +46,7 @@ using namespace ph::warping;
 using namespace std;
 using namespace Reymenta;
 
-class ReymentaMixnMapApp : public AppNative {
+class MixnMap : public AppNative {
 public:
 	void prepareSettings(Settings *settings);
 
@@ -79,6 +81,6 @@ private:
 	OSCRef						mOSC;
 	// warps
 	WarpWrapperRef				mWarpings;
-
-	void						getWindowsResolution();
+	// utils
+	BatchassRef					mBatchass;
 };

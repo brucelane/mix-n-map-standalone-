@@ -47,7 +47,7 @@ namespace Reymenta
 		void						keyUp(KeyEvent event);
 		void						draw();
 		void						createWarps(int count);
-		void						setSelectedWarp(int index) { mParameterBag->selectedWarp = min((int)mWarps.size(), index); };
+		void						setSelectedWarp(int index) { mParameterBag->selectedWarp = min(((int)mWarps.size())-1, index); };
 		void						setChannelForSelectedWarp(int index) { mParameterBag->iWarpFboChannels[mParameterBag->selectedWarp] = index; };
 		void						setCrossfadeForSelectedWarp(float value) { mTextures->setCrossfade(value); };
 		int							getSelectedWarp() { return mParameterBag->selectedWarp; };

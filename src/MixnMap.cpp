@@ -100,6 +100,7 @@ void MixnMap::draw()
 	{
 		gl::enableAlphaBlending();
 
+		static bool showTest = false, showTheme = false;
 		// UI
 		ImGui::NewFrame();
 		ImGui::SetNewWindowDefaultPos(ImVec2(0, 0));
@@ -127,32 +128,69 @@ void MixnMap::draw()
 
 			if (ImGui::CollapsingHeader("Parameters", "1", true, true))
 			{
+				// Checkbox
+				ImGui::Checkbox("Show test window", &showTest);
+				ImGui::SameLine();
+				ImGui::Checkbox("Show theme editor window", &showTheme);
+				// osc
 				ImGui::InputInt("OSC receiver port", &mParameterBag->mOSCReceiverPort);
 				// foreground color
 				static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
-				ImGui::ColorEdit4("color", color);
+				ImGui::ColorEdit4("fc", color);
 				mParameterBag->controlValues[1] = color[0];
 				mParameterBag->controlValues[2] = color[1];
 				mParameterBag->controlValues[3] = color[2];
 				mParameterBag->controlValues[4] = color[3];
-				ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], 0.0f, 0.0f, 1.0f), "Red"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0.0f, mParameterBag->controlValues[2], 0.0f, 1.0f), "Green"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0.0f, 0.0f, mParameterBag->controlValues[3], 1.0f), "Blue"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4]), "Alpha");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4]), "foreground color");
 
 				// background color
 				static float backcolor[4] = { mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8] };
-				ImGui::ColorEdit4("back color", backcolor);
+				ImGui::ColorEdit4("bc", backcolor);
 				mParameterBag->controlValues[5] = backcolor[0];
 				mParameterBag->controlValues[6] = backcolor[1];
 				mParameterBag->controlValues[7] = backcolor[2];
 				mParameterBag->controlValues[8] = backcolor[3];
-				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], 0.0f, 0.0f, 1.0f), "Red"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0.0f, mParameterBag->controlValues[6], 0.0f, 1.0f), "Green"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0.0f, 0.0f, mParameterBag->controlValues[7], 1.0f), "Blue"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "Alpha");
-
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "background color");
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
+
+			}
+			if (ImGui::CollapsingHeader("Warps"))
+			{
+				ImGui::Columns(5, "data", true);
+				ImGui::Text("WarpID"); ImGui::NextColumn();
+				ImGui::Text("LeftMode"); ImGui::NextColumn();
+				ImGui::Text("LeftInput"); ImGui::NextColumn();
+				ImGui::Text("rightMode"); ImGui::NextColumn();
+				ImGui::Text("rightIndex"); ImGui::NextColumn();
+				ImGui::Separator();
+
+				for (int i = 0; i < mTextures->warpInputs.size(); i++)
+				{					
+					ImGui::Text("%d", i);		ImGui::NextColumn();
+					ImGui::Text("%d", mTextures->getWarpInput(i).leftMode); ImGui::NextColumn();
+					ImGui::Text("%d", mTextures->getWarpInput(i).leftIndex); ImGui::NextColumn();
+					ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
+					ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
+				}
+
+				ImGui::Columns(3);
+
+				ImGui::Separator();
+
+				ImGui::Button("Banana"); ImGui::NextColumn();
+				ImGui::Button("Apple"); ImGui::NextColumn();
+				ImGui::Button("Corniflower"); ImGui::NextColumn();
+
+				static int e = 0;
+				ImGui::RadioButton("radio a", &e, 0); ImGui::NextColumn();
+				ImGui::RadioButton("radio b", &e, 1); ImGui::NextColumn();
+				ImGui::RadioButton("radio c", &e, 2); ImGui::NextColumn();
+				ImGui::Columns(1);
+
+				ImGui::Separator();
+				ImGui::Text("Selected warp:" + mParameterBag->selectedWarp);
 
 			}
 			if (ImGui::CollapsingHeader("Log", "2", true, true))
@@ -209,138 +247,143 @@ void MixnMap::draw()
 				ImGui::EndChild();
 			}
 		}
-		ImGui::ShowTestWindow();
+		if (showTest) ImGui::ShowTestWindow();
 		ImGui::End();
 		// start a new window
-		ImGui::Begin("Theme Editor", NULL, ImVec2(200, 100));
+		if (showTheme)
 		{
-			// our theme variables
-			static ImVec4 color0 = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-			static ImVec4 color1 = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
-			static ImVec4 color2 = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
-			static ImVec4 color3 = ImVec4(0.69f, 0.69f, 0.69f, 1.0f);
-			static ImVec4 color4 = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
 
-			static float WindowPadding[2] = { 25, 10 };
-			static float WindowMinSize[2] = { 160, 80 };
-			static float FramePadding[2] = { 4, 4 };
-			static float ItemSpacing[2] = { 10, 5 };
-			static float ItemInnerSpacing[2] = { 5, 5 };
+			ImGui::Begin("Theme Editor", NULL, ImVec2(200, 100));
+			{
+				// our theme variables
+				static ImVec4 color0 = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+				static ImVec4 color1 = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
+				static ImVec4 color2 = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+				static ImVec4 color3 = ImVec4(0.69f, 0.69f, 0.69f, 1.0f);
+				static ImVec4 color4 = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
 
-			static float WindowFillAlphaDefault = 0.7;
-			static float WindowRounding = 4;
-			static float TreeNodeSpacing = 22;
-			static float ColumnsMinSpacing = 50;
-			static float ScrollBarWidth = 12;
+				static float WindowPadding[2] = { 25, 10 };
+				static float WindowMinSize[2] = { 160, 80 };
+				static float FramePadding[2] = { 4, 4 };
+				static float ItemSpacing[2] = { 10, 5 };
+				static float ItemInnerSpacing[2] = { 5, 5 };
 
-			if (ImGui::CollapsingHeader("Colors")){
+				static float WindowFillAlphaDefault = 0.7;
+				static float WindowRounding = 4;
+				static float TreeNodeSpacing = 22;
+				static float ColumnsMinSpacing = 50;
+				static float ScrollBarWidth = 12;
 
-				// add radios on one line to switch between color modes
-				static ImGuiColorEditMode colorMode = ImGuiColorEditMode_RGB;
-				ImGui::RadioButton("RGB", &colorMode, ImGuiColorEditMode_RGB);
+				if (ImGui::CollapsingHeader("Colors")){
+
+					// add radios on one line to switch between color modes
+					static ImGuiColorEditMode colorMode = ImGuiColorEditMode_RGB;
+					ImGui::RadioButton("RGB", &colorMode, ImGuiColorEditMode_RGB);
+					ImGui::SameLine();
+					ImGui::RadioButton("HSV", &colorMode, ImGuiColorEditMode_HSV);
+					ImGui::SameLine();
+					ImGui::RadioButton("HEX", &colorMode, ImGuiColorEditMode_HEX);
+
+					// change color mode
+					ImGui::ColorEditMode(colorMode);
+
+					// add color controls
+					ImGui::ColorEdit4("Color0", (float*)&color0, false);
+					ImGui::ColorEdit4("Color1", (float*)&color1, false);
+					ImGui::ColorEdit4("Color2", (float*)&color2, false);
+					ImGui::ColorEdit4("Color3", (float*)&color3, false);
+					ImGui::ColorEdit4("Color4", (float*)&color4, false);
+				}
+
+				if (ImGui::CollapsingHeader("Layout")){
+
+					// layout controls
+					ImGui::SliderFloat2("WindowPadding", WindowPadding, 0, 50, "%.0f");
+					ImGui::SliderFloat2("WindowMinSize", WindowMinSize, 0, 250, "%.0f");
+					ImGui::SliderFloat2("FramePadding", FramePadding, 0, 40, "%.0f");
+					ImGui::SliderFloat2("ItemSpacing", ItemSpacing, 0, 40, "%.0f");
+					ImGui::SliderFloat2("ItemInnerSpacing", ItemInnerSpacing, 0, 40, "%.0f");
+					ImGui::SliderFloat("WindowFillAlphaDefault", &WindowFillAlphaDefault, 0, 1);
+					ImGui::SliderFloat("WindowRounding", &WindowRounding, 0, 15, "%.0f");
+					ImGui::SliderFloat("TreeNodeSpacing", &TreeNodeSpacing, 0, 50, "%.0f");
+					ImGui::SliderFloat("ColumnsMinSpacing", &ColumnsMinSpacing, 0, 150, "%.0f");
+					ImGui::SliderFloat("ScrollBarWidth", &ScrollBarWidth, 0, 35, "%.0f");
+				}
+
+
+				// add a checkbox
+				static bool apply = false;
+				ImGui::Checkbox("Apply", &apply);
 				ImGui::SameLine();
-				ImGui::RadioButton("HSV", &colorMode, ImGuiColorEditMode_HSV);
-				ImGui::SameLine();
-				ImGui::RadioButton("HEX", &colorMode, ImGuiColorEditMode_HEX);
+				if (ImGui::Button("Reset")){
+					color0 = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+					color1 = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
+					color2 = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+					color3 = ImVec4(0.69f, 0.69f, 0.69f, 1.0f);
+					color4 = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
 
-				// change color mode
-				ImGui::ColorEditMode(colorMode);
+					WindowPadding[0] = WindowPadding[1] = 8;
+					WindowMinSize[0] = WindowMinSize[1] = 48;
+					FramePadding[0] = 5; FramePadding[1] = 4;
+					ItemSpacing[0] = 10; ItemSpacing[1] = 5;
+					ItemInnerSpacing[0] = ItemInnerSpacing[1] = 5;
 
-				// add color controls
-				ImGui::ColorEdit4("Color0", (float*)&color0, false);
-				ImGui::ColorEdit4("Color1", (float*)&color1, false);
-				ImGui::ColorEdit4("Color2", (float*)&color2, false);
-				ImGui::ColorEdit4("Color3", (float*)&color3, false);
-				ImGui::ColorEdit4("Color4", (float*)&color4, false);
+					WindowFillAlphaDefault = 0.70f;
+					WindowRounding = 4.0f;
+					TreeNodeSpacing = 22.0f;
+					ColumnsMinSpacing = 6.0f;
+					ScrollBarWidth = 16.0f;
+				}
+
+				// show tooltip over checkbox
+				if (ImGui::IsHovered()){
+					ImGui::SetTooltip("Apply the theme colors");
+				}
+
+				// if apply is checked make modifications
+				if (apply){
+					ImGui::setThemeColor(color0, color1, color2, color3, color4);
+
+					ImGui::GetStyle().WindowPadding = ImVec2(WindowPadding[0], WindowPadding[1]);
+					ImGui::GetStyle().WindowMinSize = ImVec2(WindowMinSize[0], WindowMinSize[1]);
+					ImGui::GetStyle().FramePadding = ImVec2(FramePadding[0], FramePadding[1]);
+					ImGui::GetStyle().ItemSpacing = ImVec2(ItemSpacing[0], ItemSpacing[1]);
+					ImGui::GetStyle().ItemInnerSpacing = ImVec2(ItemInnerSpacing[0], ItemInnerSpacing[1]);
+					ImGui::GetStyle().WindowFillAlphaDefault = WindowFillAlphaDefault;
+					ImGui::GetStyle().WindowRounding = WindowRounding;
+					ImGui::GetStyle().TreeNodeSpacing = TreeNodeSpacing;
+					ImGui::GetStyle().ColumnsMinSpacing = ColumnsMinSpacing;
+					ImGui::GetStyle().ScrollBarWidth = ScrollBarWidth;
+				}
+
+				// if log pressed generate code and output to the console
+				if (ImGui::Button("Log to Console")){
+					console() << "ImVec4 color0 = ImVec4( " << color0.x << ", " << color0.y << ", " << color0.z << ", " << color0.w << " );" << endl
+						<< "ImVec4 color1 = ImVec4( " << color1.x << ", " << color1.y << ", " << color1.z << ", " << color1.w << " );" << endl
+						<< "ImVec4 color2 = ImVec4( " << color2.x << ", " << color2.y << ", " << color2.z << ", " << color2.w << " );" << endl
+						<< "ImVec4 color3 = ImVec4( " << color3.x << ", " << color3.y << ", " << color3.z << ", " << color3.w << " );" << endl
+						<< "ImVec4 color4 = ImVec4( " << color4.x << ", " << color4.y << ", " << color4.z << ", " << color4.w << " );" << endl
+						<< "ImGui::setThemeColor( color0, color1, color2, color3, color4 );" << endl << endl
+						<< "ImGuiStyle& style = ImGui::GetStyle();" << endl
+						<< "style.WindowPadding          = ImVec2( " << WindowPadding[0] << "," << WindowPadding[1] << " );" << endl
+						<< "style.WindowMinSize          = ImVec2( " << WindowMinSize[0] << "," << WindowMinSize[1] << " );" << endl
+						<< "style.FramePadding           = ImVec2( " << FramePadding[0] << "," << FramePadding[1] << " );" << endl
+						<< "style.ItemSpacing            = ImVec2( " << ItemSpacing[0] << "," << ItemSpacing[1] << " );" << endl
+						<< "style.ItemInnerSpacing       = ImVec2( " << ItemInnerSpacing[0] << "," << ItemInnerSpacing[1] << " );" << endl
+						<< "style.WindowFillAlphaDefault = " << WindowFillAlphaDefault << ";" << endl
+						<< "style.WindowRounding         = " << WindowRounding << ";" << endl
+						<< "style.TreeNodeSpacing		 = " << TreeNodeSpacing << ";" << endl
+						<< "style.ColumnsMinSpacing		 = " << ColumnsMinSpacing << ";" << endl
+						<< "style.ScrollBarWidth		 = " << ScrollBarWidth << ";" << endl;
+				}
+
+
+				// add a slider to control the background brightness
+				//ImGui::SliderFloat("Background", &f, 0, 1);
 			}
-
-			if (ImGui::CollapsingHeader("Layout")){
-
-				// layout controls
-				ImGui::SliderFloat2("WindowPadding", WindowPadding, 0, 50, "%.0f");
-				ImGui::SliderFloat2("WindowMinSize", WindowMinSize, 0, 250, "%.0f");
-				ImGui::SliderFloat2("FramePadding", FramePadding, 0, 40, "%.0f");
-				ImGui::SliderFloat2("ItemSpacing", ItemSpacing, 0, 40, "%.0f");
-				ImGui::SliderFloat2("ItemInnerSpacing", ItemInnerSpacing, 0, 40, "%.0f");
-				ImGui::SliderFloat("WindowFillAlphaDefault", &WindowFillAlphaDefault, 0, 1);
-				ImGui::SliderFloat("WindowRounding", &WindowRounding, 0, 15, "%.0f");
-				ImGui::SliderFloat("TreeNodeSpacing", &TreeNodeSpacing, 0, 50, "%.0f");
-				ImGui::SliderFloat("ColumnsMinSpacing", &ColumnsMinSpacing, 0, 150, "%.0f");
-				ImGui::SliderFloat("ScrollBarWidth", &ScrollBarWidth, 0, 35, "%.0f");
-			}
-
-
-			// add a checkbox
-			static bool apply = false;
-			ImGui::Checkbox("Apply", &apply);
-			ImGui::SameLine();
-			if (ImGui::Button("Reset")){
-				color0 = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-				color1 = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
-				color2 = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
-				color3 = ImVec4(0.69f, 0.69f, 0.69f, 1.0f);
-				color4 = ImVec4(0.27f, 0.27f, 0.27f, 1.0f);
-
-				WindowPadding[0] = WindowPadding[1] = 8;
-				WindowMinSize[0] = WindowMinSize[1] = 48;
-				FramePadding[0] = 5; FramePadding[1] = 4;
-				ItemSpacing[0] = 10; ItemSpacing[1] = 5;
-				ItemInnerSpacing[0] = ItemInnerSpacing[1] = 5;
-
-				WindowFillAlphaDefault = 0.70f;
-				WindowRounding = 4.0f;
-				TreeNodeSpacing = 22.0f;
-				ColumnsMinSpacing = 6.0f;
-				ScrollBarWidth = 16.0f;
-			}
-
-			// show tooltip over checkbox
-			if (ImGui::IsHovered()){
-				ImGui::SetTooltip("Apply the theme colors");
-			}
-
-			// if apply is checked make modifications
-			if (apply){
-				ImGui::setThemeColor(color0, color1, color2, color3, color4);
-
-				ImGui::GetStyle().WindowPadding = ImVec2(WindowPadding[0], WindowPadding[1]);
-				ImGui::GetStyle().WindowMinSize = ImVec2(WindowMinSize[0], WindowMinSize[1]);
-				ImGui::GetStyle().FramePadding = ImVec2(FramePadding[0], FramePadding[1]);
-				ImGui::GetStyle().ItemSpacing = ImVec2(ItemSpacing[0], ItemSpacing[1]);
-				ImGui::GetStyle().ItemInnerSpacing = ImVec2(ItemInnerSpacing[0], ItemInnerSpacing[1]);
-				ImGui::GetStyle().WindowFillAlphaDefault = WindowFillAlphaDefault;
-				ImGui::GetStyle().WindowRounding = WindowRounding;
-				ImGui::GetStyle().TreeNodeSpacing = TreeNodeSpacing;
-				ImGui::GetStyle().ColumnsMinSpacing = ColumnsMinSpacing;
-				ImGui::GetStyle().ScrollBarWidth = ScrollBarWidth;
-			}
-
-			// if log pressed generate code and output to the console
-			if (ImGui::Button("Log to Console")){
-				console() << "ImVec4 color0 = ImVec4( " << color0.x << ", " << color0.y << ", " << color0.z << ", " << color0.w << " );" << endl
-					<< "ImVec4 color1 = ImVec4( " << color1.x << ", " << color1.y << ", " << color1.z << ", " << color1.w << " );" << endl
-					<< "ImVec4 color2 = ImVec4( " << color2.x << ", " << color2.y << ", " << color2.z << ", " << color2.w << " );" << endl
-					<< "ImVec4 color3 = ImVec4( " << color3.x << ", " << color3.y << ", " << color3.z << ", " << color3.w << " );" << endl
-					<< "ImVec4 color4 = ImVec4( " << color4.x << ", " << color4.y << ", " << color4.z << ", " << color4.w << " );" << endl
-					<< "ImGui::setThemeColor( color0, color1, color2, color3, color4 );" << endl << endl
-					<< "ImGuiStyle& style = ImGui::GetStyle();" << endl
-					<< "style.WindowPadding          = ImVec2( " << WindowPadding[0] << "," << WindowPadding[1] << " );" << endl
-					<< "style.WindowMinSize          = ImVec2( " << WindowMinSize[0] << "," << WindowMinSize[1] << " );" << endl
-					<< "style.FramePadding           = ImVec2( " << FramePadding[0] << "," << FramePadding[1] << " );" << endl
-					<< "style.ItemSpacing            = ImVec2( " << ItemSpacing[0] << "," << ItemSpacing[1] << " );" << endl
-					<< "style.ItemInnerSpacing       = ImVec2( " << ItemInnerSpacing[0] << "," << ItemInnerSpacing[1] << " );" << endl
-					<< "style.WindowFillAlphaDefault = " << WindowFillAlphaDefault << ";" << endl
-					<< "style.WindowRounding         = " << WindowRounding << ";" << endl
-					<< "style.TreeNodeSpacing		 = " << TreeNodeSpacing << ";" << endl
-					<< "style.ColumnsMinSpacing		 = " << ColumnsMinSpacing << ";" << endl
-					<< "style.ScrollBarWidth		 = " << ScrollBarWidth << ";" << endl;
-			}
-
-
-			// add a slider to control the background brightness
-			//ImGui::SliderFloat("Background", &f, 0, 1);
+			ImGui::End();
 		}
-		ImGui::End();
+
 		ImGui::Render();
 	}
 	gl::disableAlphaBlending();
@@ -379,9 +422,27 @@ void MixnMap::keyDown(KeyEvent event)
 	mWarpings->keyDown(event);
 	switch (event.getCode())
 	{
-	case KeyEvent::KEY_ESCAPE:
-		// quit the application
-		quit();
+	case ci::app::KeyEvent::KEY_o:
+		mParameterBag->mOriginUpperLeft = !mParameterBag->mOriginUpperLeft;
+		break;
+	case ci::app::KeyEvent::KEY_g:
+		mParameterBag->iGreyScale = !mParameterBag->iGreyScale;
+		break;
+	case ci::app::KeyEvent::KEY_u:
+		mParameterBag->mShowUI = !mParameterBag->mShowUI;
+		break;
+	case ci::app::KeyEvent::KEY_c:
+		if (mParameterBag->mCursorVisible)
+		{
+			hideCursor();
+		}
+		else
+		{
+			showCursor();
+		}
+		mParameterBag->mCursorVisible = !mParameterBag->mCursorVisible;
+		break;
+	default:
 		break;
 	}
 }

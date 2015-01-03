@@ -156,7 +156,7 @@ void MixnMap::draw()
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
 
 			}
-			if (ImGui::CollapsingHeader("Warps"))
+			if (ImGui::CollapsingHeader("Warps", "2", true, true))
 			{
 				ImGui::Columns(5, "data", true);
 				ImGui::Text("WarpID"); ImGui::NextColumn();
@@ -193,7 +193,7 @@ void MixnMap::draw()
 				ImGui::Text("Selected warp:" + mParameterBag->selectedWarp);
 
 			}
-			if (ImGui::CollapsingHeader("Log", "2", true, true))
+			if (ImGui::CollapsingHeader("Log", "3", true, true))
 			{
 				static bool pause;
 				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
@@ -214,8 +214,8 @@ void MixnMap::draw()
 				static ImGuiTextBuffer log;
 				static int lines = 0;
 				ImGui::Text("Buffer contents: %d lines, %d bytes", lines, log.size());
+				ImGui::SameLine();
 				if (ImGui::Button("Clear")) { log.clear(); lines = 0; }
-				//ImGui::SameLine();
 
 				if (newLogMsg)
 				{
@@ -228,11 +228,12 @@ void MixnMap::draw()
 				ImGui::TextUnformatted(log.begin(), log.end());
 				ImGui::EndChild();
 			}
-			if (ImGui::CollapsingHeader("OSC", "2", true, true))
+			if (ImGui::CollapsingHeader("OSC", "4", true, true))
 			{
 				static ImGuiTextBuffer OSClog;
 				static int lines = 0;
 				ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+				ImGui::SameLine();
 				if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
 
 				if (mParameterBag->newOSCMsg)

@@ -187,6 +187,24 @@ void MixnMap::draw()
 			ImGui::TextUnformatted(log.begin(), log.end());
 			ImGui::EndChild();
 		}
+		if (ImGui::CollapsingHeader("OSC", "2", true, true))
+		{
+			static ImGuiTextBuffer OSClog;
+			static int lines = 0;
+			ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+			if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
+
+			if (mParameterBag->newOSCMsg)
+			{
+				mParameterBag->newOSCMsg = false;
+				OSClog.append(mParameterBag->OSCMsg.c_str());
+				lines++;
+				if (lines > 10) { OSClog.clear(); lines = 0; }
+			}
+			ImGui::BeginChild("OSClog");
+			ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
+			ImGui::EndChild();
+		}
 	}
 	ImGui::ShowTestWindow();
 	ImGui::End();

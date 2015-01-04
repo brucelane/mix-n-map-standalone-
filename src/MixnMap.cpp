@@ -158,7 +158,29 @@ void MixnMap::draw()
 				ImGui::SameLine();
 				ImGui::Checkbox("Show theme editor window", &showTheme);
 				// osc
-				ImGui::InputInt("OSC receiver port", &mParameterBag->mOSCReceiverPort);
+				if (mParameterBag->mIsOSCSender)
+				{
+					ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::SameLine();
+					ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
+				}
+				else
+				{
+					ImGui::Text("Host %s", mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::SameLine();
+					ImGui::Text("Port %d", mParameterBag->mOSCDestinationPort);
+					ImGui::SameLine();
+					/*static char host[128];
+					strcpy(host, mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::InputText("OSC send to host", host, 128);
+					ImGui::InputInt("OSC send on port", &mParameterBag->mOSCDestinationPort);
+					ImGui::SameLine();*/
+					if (ImGui::Button("OK")) 
+					{ 
+						//mParameterBag->mOSCDestinationHost = host;
+						mOSC->setupSender(); 
+					}
+				}
 				// foreground color
 				static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
 				ImGui::ColorEdit4("f", color);
@@ -196,26 +218,18 @@ void MixnMap::draw()
 					ImGui::Text("%d", i);		ImGui::NextColumn();
 					ImGui::Text("%d", mTextures->getWarpInput(i).leftMode); ImGui::NextColumn();
 					ImGui::Text("%d", mTextures->getWarpInput(i).leftIndex); ImGui::NextColumn();
-					ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
+					//ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
+					static int e = 0;
+					ImGui::RadioButton("texture", &e, 0); ImGui::NextColumn();
+					ImGui::RadioButton("shader", &e, 1); ImGui::NextColumn();
 					ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
 				}
+				//RTE mTextures->warpInputs[0].rightMode = 1;
+				//mTextures->setWarpInputModeRight(0, 1);
 
-				ImGui::Columns(3);
-
-				ImGui::Separator();
-
-				ImGui::Button("Banana"); ImGui::NextColumn();
-				ImGui::Button("Apple"); ImGui::NextColumn();
-				ImGui::Button("Corniflower"); ImGui::NextColumn();
-
-				static int e = 0;
-				ImGui::RadioButton("radio a", &e, 0); ImGui::NextColumn();
-				ImGui::RadioButton("radio b", &e, 1); ImGui::NextColumn();
-				ImGui::RadioButton("radio c", &e, 2); ImGui::NextColumn();
-				ImGui::Columns(1);
 
 				ImGui::Separator();
-				ImGui::Text("Selected warp:" + mParameterBag->selectedWarp);
+				ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 
 			}
 			if (ImGui::CollapsingHeader("Log", "3", true, true))
@@ -230,7 +244,7 @@ void MixnMap::draw()
 						values_offset = (values_offset + 1) % values.size();
 					}
 
-				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 30));
+				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
 
 				static ImGuiTextBuffer log;
 				static int lines = 0;
@@ -415,6 +429,8 @@ void MixnMap::draw()
 				ImGui::Checkbox("Playing", &mParameterBag->mIsPlaying);
 				ImGui::SameLine();
 				ImGui::Text("Beat %d", mParameterBag->mBeat);
+				ImGui::SameLine();
+				ImGui::Text("Tempo %.2f", mParameterBag->mTempo);
 
 				static ImVector<float> values; if (values.empty()) { values.resize(40); memset(&values.front(), 0, values.size()*sizeof(float)); }
 				static int values_offset = 0;
@@ -426,7 +442,7 @@ void MixnMap::draw()
 						values[values_offset] = mParameterBag->maxVolume;
 						values_offset = (values_offset + 1) % values.size();
 					}
-				ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mParameterBag->maxVolume).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
+					ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
 			}
 			ImGui::End();
 		}

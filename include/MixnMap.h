@@ -58,7 +58,7 @@ public:
 	void draw();
 
 	void resize();
-
+	void fileDrop(FileDropEvent event);
 	void mouseMove(MouseEvent event);
 	void mouseDown(MouseEvent event);
 	void mouseDrag(MouseEvent event);
@@ -88,4 +88,6 @@ private:
 	// log
 	string						mLogMsg;
 	bool						newLogMsg;
+#define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 };

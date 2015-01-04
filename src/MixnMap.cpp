@@ -62,25 +62,11 @@ void MixnMap::shutdown()
 }
 void MixnMap::fileDrop(FileDropEvent event)
 {
-	string ext = "";
 	// use the last of the dropped files
 	boost::filesystem::path mPath = event.getFile(event.getNumFiles() - 1);
 	string mFile = mPath.string();
-	if (mFile.find_last_of(".") != std::string::npos) ext = mFile.substr(mFile.find_last_of(".") + 1);
-	log->logTimedString(mFile + " dropped, currentSelectedIndex:" + toString(mParameterBag->currentSelectedIndex) + " x: " + toString(event.getX()) + " mPreviewWidth: " + toString(mParameterBag->mPreviewWidth));
+	mTextures->fileDrop(mFile);
 
-	if (ext == "glsl")
-	{
-		if (mShaders->loadPixelFragmentShader(mFile))
-		{
-			mParameterBag->controlValues[13] = 1.0f;
-			int sIndex = mTextures->addShadaFbo();
-			mTextures->warpInputs[0].rightIndex = sIndex;
-			mTextures->warpInputs[0].rightMode = 1;
-			mTextures->warpInputs[0].iCrossfade = 1.0;
-
-		}
-	}
 
 }
 
@@ -181,6 +167,8 @@ void MixnMap::draw()
 						mOSC->setupSender(); 
 					}
 				}
+					ImGui::SameLine();
+					ImGui::Text("Receiving on port %d", mParameterBag->mOSCReceiverPort);
 				// foreground color
 				static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
 				ImGui::ColorEdit4("f", color);
@@ -219,12 +207,12 @@ void MixnMap::draw()
 					ImGui::Text("%d", mTextures->getWarpInput(i).leftMode); ImGui::NextColumn();
 					ImGui::Text("%d", mTextures->getWarpInput(i).leftIndex); ImGui::NextColumn();
 					//ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
-					static int e = 0;
-					ImGui::RadioButton("texture", &e, 0); ImGui::NextColumn();
-					ImGui::RadioButton("shader", &e, 1); ImGui::NextColumn();
-					ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
+					//static int e = 0;
+					//ImGui::RadioButton("texture", &e, 0); ImGui::NextColumn();
+					//ImGui::RadioButton("shader", &e, 1); ImGui::NextColumn();
+					//ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
 				}
-				//RTE mTextures->warpInputs[0].rightMode = 1;
+				//RTE because nothing ! mTextures->warpInputs[0].rightMode = 1;
 				//mTextures->setWarpInputModeRight(0, 1);
 
 

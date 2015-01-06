@@ -48,6 +48,8 @@ using namespace ph::warping;
 using namespace std;
 using namespace Reymenta;
 
+#define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 class MixnMap : public AppNative {
 public:
 	void prepareSettings(Settings *settings);
@@ -88,6 +90,6 @@ private:
 	// log
 	string						mLogMsg;
 	bool						newLogMsg;
-#define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
+	static const int			MAX = 16;
 
 };

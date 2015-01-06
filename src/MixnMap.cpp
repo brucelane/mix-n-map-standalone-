@@ -4,7 +4,7 @@ TODO
 - competition between imgui and midi colors: imgui wins
 - render video to fbo
 - have 16 fbos, shaders, etc
-- have 16 warps, draw then only if active
+- have 16 warps, draw them only if active
 
 */
 
@@ -200,6 +200,13 @@ void MixnMap::draw()
 				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "bg color");
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
 
+			}
+			if (ImGui::CollapsingHeader("Tracks"))
+			{
+				for (int a = 0; a < MAX; a++)
+				{
+					if (mOSC->tracks[a] != "") ImGui::Button(mOSC->tracks[a].c_str());
+				}
 			}
 			/*if (ImGui::CollapsingHeader("Warps", "2", true, true))
 			{

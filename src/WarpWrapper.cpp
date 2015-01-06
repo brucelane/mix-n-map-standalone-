@@ -166,10 +166,10 @@ void WarpWrapper::draw()
 	int i = 0;
 	for (auto &warp : mWarps)
 	{
-		if (mTextures->)
+		if (mTextures->getWarpFbo(mParameterBag->iWarpFboChannels[i]).active)
 		{
-			//warp->setSize(ivec2(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getWidth(), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getHeight()));
-			warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
+			//warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
+			warp->draw(mTextures->getWarpTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getWarpTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
 			i++;
 		}
 	}

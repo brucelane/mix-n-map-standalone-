@@ -201,11 +201,11 @@ void MixnMap::draw()
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
 
 			}
-			if (ImGui::CollapsingHeader("Tracks"))
+			if (ImGui::CollapsingHeader("Tracks", "2", true, true))
 			{
 				for (int a = 0; a < MAX; a++)
 				{
-					if (mOSC->tracks[a] != "") ImGui::Button(mOSC->tracks[a].c_str());
+					if (mOSC->tracks[a] != "default.glsl") ImGui::Button(mOSC->tracks[a].c_str());
 				}
 			}
 			/*if (ImGui::CollapsingHeader("Warps", "2", true, true))
@@ -237,7 +237,7 @@ void MixnMap::draw()
 				ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 
 			}*/
-			if (ImGui::CollapsingHeader("Log", "3", true, true))
+			if (ImGui::CollapsingHeader("Log", "4", true, true))
 			{
 				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
 				static int values_offset = 0;
@@ -268,7 +268,7 @@ void MixnMap::draw()
 				ImGui::TextUnformatted(log.begin(), log.end());
 				ImGui::EndChild();
 			}
-			if (ImGui::CollapsingHeader("OSC", "4", true, true))
+			if (ImGui::CollapsingHeader("OSC", "5", true, true))
 			{
 				static ImGuiTextBuffer OSClog;
 				static int lines = 0;

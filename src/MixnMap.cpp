@@ -119,7 +119,7 @@ void MixnMap::draw()
 	{
 		gl::enableAlphaBlending();
 
-		static bool showTest = false, showTheme = false, showAudio = true;
+		static bool showTest = false, showTheme = false, showAudio = true, showShaders = true;
 		// UI
 		ImGui::NewFrame();
 		ImGui::SetNewWindowDefaultPos(ImVec2(0, 0));
@@ -148,11 +148,13 @@ void MixnMap::draw()
 			if (ImGui::CollapsingHeader("Parameters", "1", true, true))
 			{
 				// Checkbox
-				ImGui::Checkbox("Show audio window", &showAudio);
+				ImGui::Checkbox("Show Audio", &showAudio);
 				ImGui::SameLine();
-				ImGui::Checkbox("Show test window", &showTest);
+				ImGui::Checkbox("Show Shada", &showShaders);
 				ImGui::SameLine();
-				ImGui::Checkbox("Show theme editor window", &showTheme);
+				ImGui::Checkbox("Show test", &showTest);
+				ImGui::SameLine();
+				ImGui::Checkbox("Show theme editor", &showTheme);
 				// osc
 				if (mParameterBag->mIsOSCSender)
 				{
@@ -171,14 +173,14 @@ void MixnMap::draw()
 					ImGui::InputText("OSC send to host", host, 128);
 					ImGui::InputInt("OSC send on port", &mParameterBag->mOSCDestinationPort);
 					ImGui::SameLine();*/
-					if (ImGui::Button("OK")) 
-					{ 
+					if (ImGui::Button("OK"))
+					{
 						//mParameterBag->mOSCDestinationHost = host;
-						mOSC->setupSender(); 
+						mOSC->setupSender();
 					}
 				}
-					ImGui::SameLine();
-					ImGui::Text("Receiving on port %d", mParameterBag->mOSCReceiverPort);
+				ImGui::SameLine();
+				ImGui::Text("Receiving on port %d", mParameterBag->mOSCReceiverPort);
 				// foreground color
 				static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
 				ImGui::ColorEdit4("f", color);
@@ -201,53 +203,46 @@ void MixnMap::draw()
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
 
 			}
-			if (ImGui::CollapsingHeader("Tracks", "2", true, true))
-			{
-				for (int a = 0; a < MAX; a++)
-				{
-					if (mOSC->tracks[a] != "default.glsl") ImGui::Button(mOSC->tracks[a].c_str());
-				}
-			}
 			/*if (ImGui::CollapsingHeader("Warps", "2", true, true))
 			{
-				ImGui::Columns(5, "data", true);
-				ImGui::Text("WarpID"); ImGui::NextColumn();
-				ImGui::Text("LeftMode"); ImGui::NextColumn();
-				ImGui::Text("LeftInput"); ImGui::NextColumn();
-				ImGui::Text("rightMode"); ImGui::NextColumn();
-				ImGui::Text("rightIndex"); ImGui::NextColumn();
-				ImGui::Separator();
+			ImGui::Columns(5, "data", true);
+			ImGui::Text("WarpID"); ImGui::NextColumn();
+			ImGui::Text("LeftMode"); ImGui::NextColumn();
+			ImGui::Text("LeftInput"); ImGui::NextColumn();
+			ImGui::Text("rightMode"); ImGui::NextColumn();
+			ImGui::Text("rightIndex"); ImGui::NextColumn();
+			ImGui::Separator();
 
-				for (int i = 0; i < mTextures->warpInputs.size(); i++)
-				{					
-					ImGui::Text("%d", i);		ImGui::NextColumn();
-					ImGui::Text("%d", mTextures->getWarpInput(i).leftMode); ImGui::NextColumn();
-					ImGui::Text("%d", mTextures->getWarpInput(i).leftIndex); ImGui::NextColumn();
-					//ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
-					//static int e = 0;
-					//ImGui::RadioButton("texture", &e, 0); ImGui::NextColumn();
-					//ImGui::RadioButton("shader", &e, 1); ImGui::NextColumn();
-					//ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
-				}
-				//RTE because nothing ! mTextures->warpInputs[0].rightMode = 1;
-				//mTextures->setWarpInputModeRight(0, 1);
+			for (int i = 0; i < mTextures->warpInputs.size(); i++)
+			{
+			ImGui::Text("%d", i);		ImGui::NextColumn();
+			ImGui::Text("%d", mTextures->getWarpInput(i).leftMode); ImGui::NextColumn();
+			ImGui::Text("%d", mTextures->getWarpInput(i).leftIndex); ImGui::NextColumn();
+			//ImGui::Text("%d", mTextures->getWarpInput(i).rightMode); ImGui::NextColumn();
+			//static int e = 0;
+			//ImGui::RadioButton("texture", &e, 0); ImGui::NextColumn();
+			//ImGui::RadioButton("shader", &e, 1); ImGui::NextColumn();
+			//ImGui::Text("%d", mTextures->getWarpInput(i).rightIndex); ImGui::NextColumn();
+			}
+			//RTE because nothing ! mTextures->warpInputs[0].rightMode = 1;
+			//mTextures->setWarpInputModeRight(0, 1);
 
 
-				ImGui::Separator();
-				ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
+			ImGui::Separator();
+			ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 
 			}*/
 			if (ImGui::CollapsingHeader("Log", "4", true, true))
 			{
 				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
 				static int values_offset = 0;
-					static float refresh_time = -1.0f;
-					if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
-					{
-						refresh_time = ImGui::GetTime();
-						values[values_offset] = getAverageFps();
-						values_offset = (values_offset + 1) % values.size();
-					}
+				static float refresh_time = -1.0f;
+				if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
+				{
+					refresh_time = ImGui::GetTime();
+					values[values_offset] = getAverageFps();
+					values_offset = (values_offset + 1) % values.size();
+				}
 
 				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
 
@@ -439,15 +434,35 @@ void MixnMap::draw()
 
 				static ImVector<float> values; if (values.empty()) { values.resize(40); memset(&values.front(), 0, values.size()*sizeof(float)); }
 				static int values_offset = 0;
-					// audio maxVolume
-					static float refresh_time = -1.0f;
-					if (ImGui::GetTime() > refresh_time + 1.0f / 20.0f)
-					{
-						refresh_time = ImGui::GetTime();
-						values[values_offset] = mParameterBag->maxVolume;
-						values_offset = (values_offset + 1) % values.size();
-					}
-					ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
+				// audio maxVolume
+				static float refresh_time = -1.0f;
+				if (ImGui::GetTime() > refresh_time + 1.0f / 20.0f)
+				{
+					refresh_time = ImGui::GetTime();
+					values[values_offset] = mParameterBag->maxVolume;
+					values_offset = (values_offset + 1) % values.size();
+				}
+				ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
+
+				for (int a = 0; a < MAX; a++)
+				{
+					if (mOSC->tracks[a] != "default.glsl") ImGui::Button(mOSC->tracks[a].c_str());
+				}
+
+			}
+			ImGui::End();
+		}
+		// audio window
+		// start a new window
+		if (showShaders)
+		{
+
+			ImGui::Begin("Shada", NULL, ImVec2(200, 100));
+			{
+				for (int a = 0; a < MAX; a++)
+				{
+					if (mShaders->getShaderName(a) != "default.glsl") ImGui::Button(mShaders->getShaderName(a).c_str());
+				}
 			}
 			ImGui::End();
 		}

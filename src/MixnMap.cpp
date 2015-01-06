@@ -1,3 +1,13 @@
+/*
+TODO
+- on video end remove and black
+- competition between imgui and midi colors: imgui wins
+- render video to fbo
+- have 16 fbos, shaders, etc
+- have 16 warps, draw then only if active
+
+*/
+
 #include "MixnMap.h"
 
 void MixnMap::prepareSettings(Settings *settings)
@@ -191,7 +201,7 @@ void MixnMap::draw()
 				if (ImGui::Button("Save")) { mParameterBag->save(); }
 
 			}
-			if (ImGui::CollapsingHeader("Warps", "2", true, true))
+			/*if (ImGui::CollapsingHeader("Warps", "2", true, true))
 			{
 				ImGui::Columns(5, "data", true);
 				ImGui::Text("WarpID"); ImGui::NextColumn();
@@ -219,7 +229,7 @@ void MixnMap::draw()
 				ImGui::Separator();
 				ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 
-			}
+			}*/
 			if (ImGui::CollapsingHeader("Log", "3", true, true))
 			{
 				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }

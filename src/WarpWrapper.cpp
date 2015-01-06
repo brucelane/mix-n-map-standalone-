@@ -24,10 +24,10 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 		// otherwise create a warp from scratch
 		mWarps.push_back(WarpPerspectiveBilinear::create());
 	}
-	for (auto &warp : mWarps)
+	/*for (auto &warp : mWarps)
 	{
 		mTextures->createWarpInput();
-	}
+	}*/
 	// adjust the content size of the warps
 	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
@@ -40,7 +40,7 @@ void WarpWrapper::createWarps(int count)
 		for (int i = mWarps.size(); i < count; i++)
 		{
 			mWarps.push_back(WarpPerspectiveBilinear::create());
-			mTextures->createWarpInput();
+			//mTextures->createWarpInput();
 		}
 	}
 }

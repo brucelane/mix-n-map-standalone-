@@ -1,10 +1,7 @@
 /*
 TODO
-- on video end remove and black
 - competition between imgui and midi colors: imgui wins
 - render video to fbo
-- have 16 fbos, shaders, etc
-- have 16 warps, draw them only if active
 
 */
 
@@ -35,8 +32,8 @@ void MixnMap::prepareSettings(Settings *settings)
 	settings->setBorderless();
 #endif  // _DEBUG
 	settings->setResizable(false); // resize allowed for a receiver, but runtime error on the resize in the shaders drawing
-	// set a high frame rate to disable limitation
-	settings->setFrameRate(1000.0f);
+	// set a high frame rate 1000 to disable limitation
+	settings->setFrameRate(60.0f);
 
 	log->logTimedString("prepareSettings done");
 }
@@ -119,7 +116,7 @@ void MixnMap::draw()
 	{
 		gl::enableAlphaBlending();
 
-		static bool showTest = false, showTheme = false, showAudio = true, showShaders = true;
+		static bool showTest = false, showTheme = false, showAudio = true, showShaders = true, showOSC = true, showFps = true;
 		// UI
 		ImGui::NewFrame();
 		ImGui::SetNewWindowDefaultPos(ImVec2(0, 0));
@@ -148,41 +145,21 @@ void MixnMap::draw()
 			if (ImGui::CollapsingHeader("Parameters", "1", true, true))
 			{
 				// Checkbox
-				ImGui::Checkbox("Show Audio", &showAudio);
+				ImGui::Checkbox("Audio", &showAudio);
 				ImGui::SameLine();
-				ImGui::Checkbox("Show Shada", &showShaders);
+				ImGui::Checkbox("Shada", &showShaders);
 				ImGui::SameLine();
-				ImGui::Checkbox("Show test", &showTest);
+				ImGui::Checkbox("Test", &showTest);
 				ImGui::SameLine();
-				ImGui::Checkbox("Show theme editor", &showTheme);
-				// osc
-				if (mParameterBag->mIsOSCSender)
-				{
-					ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
-					ImGui::SameLine();
-					ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
-				}
-				else
-				{
-					ImGui::Text("Host %s", mParameterBag->mOSCDestinationHost.c_str());
-					ImGui::SameLine();
-					ImGui::Text("Port %d", mParameterBag->mOSCDestinationPort);
-					ImGui::SameLine();
-					/*static char host[128];
-					strcpy(host, mParameterBag->mOSCDestinationHost.c_str());
-					ImGui::InputText("OSC send to host", host, 128);
-					ImGui::InputInt("OSC send on port", &mParameterBag->mOSCDestinationPort);
-					ImGui::SameLine();*/
-					if (ImGui::Button("OK"))
-					{
-						//mParameterBag->mOSCDestinationHost = host;
-						mOSC->setupSender();
-					}
-				}
+				ImGui::Checkbox("FPS", &showFps);
 				ImGui::SameLine();
-				ImGui::Text("Receiving on port %d", mParameterBag->mOSCReceiverPort);
+				ImGui::Checkbox("OSC", &showOSC);
+				ImGui::SameLine();
+				ImGui::Checkbox("Editor", &showTheme);
+				if (ImGui::Button("Save Params")) { mParameterBag->save(); }
+
 				// foreground color
-				static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
+				/*static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
 				ImGui::ColorEdit4("f", color);
 				mParameterBag->controlValues[1] = color[0];
 				mParameterBag->controlValues[2] = color[1];
@@ -199,8 +176,7 @@ void MixnMap::draw()
 				mParameterBag->controlValues[7] = backcolor[2];
 				mParameterBag->controlValues[8] = backcolor[3];
 				ImGui::SameLine();
-				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "bg color");
-				if (ImGui::Button("Save")) { mParameterBag->save(); }
+				ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "bg color");*/
 
 			}
 			/*if (ImGui::CollapsingHeader("Warps", "2", true, true))
@@ -231,20 +207,9 @@ void MixnMap::draw()
 			ImGui::Separator();
 			ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 
-			}*/
+			}
 			if (ImGui::CollapsingHeader("Log", "4", true, true))
 			{
-				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
-				static int values_offset = 0;
-				static float refresh_time = -1.0f;
-				if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
-				{
-					refresh_time = ImGui::GetTime();
-					values[values_offset] = getAverageFps();
-					values_offset = (values_offset + 1) % values.size();
-				}
-
-				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
 
 				static ImGuiTextBuffer log;
 				static int lines = 0;
@@ -262,26 +227,8 @@ void MixnMap::draw()
 				ImGui::BeginChild("Log");
 				ImGui::TextUnformatted(log.begin(), log.end());
 				ImGui::EndChild();
-			}
-			if (ImGui::CollapsingHeader("OSC", "5", true, true))
-			{
-				static ImGuiTextBuffer OSClog;
-				static int lines = 0;
-				if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
-				ImGui::SameLine();
-				ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+			}*/
 
-				if (mParameterBag->newOSCMsg)
-				{
-					mParameterBag->newOSCMsg = false;
-					OSClog.append(mParameterBag->OSCMsg.c_str());
-					lines++;
-					if (lines > 1000) { OSClog.clear(); lines = 0; }
-				}
-				ImGui::BeginChild("OSClog");
-				ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
-				ImGui::EndChild();
-			}
 		}
 		if (showTest) ImGui::ShowTestWindow();
 		ImGui::End();
@@ -420,7 +367,6 @@ void MixnMap::draw()
 			ImGui::End();
 		}
 		// audio window
-		// start a new window
 		if (showAudio)
 		{
 
@@ -452,8 +398,7 @@ void MixnMap::draw()
 			}
 			ImGui::End();
 		}
-		// audio window
-		// start a new window
+		// shada window
 		if (showShaders)
 		{
 
@@ -463,6 +408,76 @@ void MixnMap::draw()
 				{
 					if (mShaders->getShaderName(a) != "default.glsl") ImGui::Button(mShaders->getShaderName(a).c_str());
 				}
+			}
+			ImGui::End();
+		}
+		// fps window
+		if (showFps)
+		{
+			ImGui::Begin("Fps", NULL, ImVec2(200, 100));
+			{
+				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
+				static int values_offset = 0;
+				static float refresh_time = -1.0f;
+				if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
+				{
+					refresh_time = ImGui::GetTime();
+					values[values_offset] = getAverageFps();
+					values_offset = (values_offset + 1) % values.size();
+				}
+
+				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
+			}
+			ImGui::End();
+		}
+		// osc window
+		if (showOSC)
+		{
+
+			ImGui::Begin("OSC", NULL, ImVec2(200, 100));
+			{
+				// osc
+				if (mParameterBag->mIsOSCSender)
+				{
+					ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::SameLine();
+					ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
+				}
+				else
+				{
+					ImGui::Text("Host %s", mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::SameLine();
+					ImGui::Text("Port %d", mParameterBag->mOSCDestinationPort);
+					ImGui::SameLine();
+					/*static char host[128];
+					strcpy(host, mParameterBag->mOSCDestinationHost.c_str());
+					ImGui::InputText("OSC send to host", host, 128);
+					ImGui::InputInt("OSC send on port", &mParameterBag->mOSCDestinationPort);
+					ImGui::SameLine();*/
+					if (ImGui::Button("OK"))
+					{
+						//mParameterBag->mOSCDestinationHost = host;
+						mOSC->setupSender();
+					}
+				}
+				ImGui::SameLine();
+				ImGui::Text("Receiving on port %d", mParameterBag->mOSCReceiverPort);
+				static ImGuiTextBuffer OSClog;
+				static int lines = 0;
+				if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
+				ImGui::SameLine();
+				ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+
+				if (mParameterBag->newOSCMsg)
+				{
+					mParameterBag->newOSCMsg = false;
+					OSClog.append(mParameterBag->OSCMsg.c_str());
+					lines++;
+					if (lines > 1000) { OSClog.clear(); lines = 0; }
+				}
+				ImGui::BeginChild("OSClog");
+				ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
+				ImGui::EndChild();
 			}
 			ImGui::End();
 		}

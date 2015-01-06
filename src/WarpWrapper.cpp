@@ -29,7 +29,7 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 		mTextures->createWarpInput();
 	}*/
 	// adjust the content size of the warps
-	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
+	Warp::setSize(mWarps, ivec2(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
 
 }

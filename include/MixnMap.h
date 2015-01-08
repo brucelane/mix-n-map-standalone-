@@ -76,9 +76,9 @@ private:
 	// Logger
 	LoggerRef					log;
 	// Shaders
-	ShadersRef					mShaders;
+	//ShadersRef					mShaders;
 	// Textures
-	TexturesRef					mTextures;
+	//TexturesRef					mTextures;
 	// spout
 	SpoutWrapperRef				mSpout;
 	// osc

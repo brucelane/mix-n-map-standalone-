@@ -42,16 +42,17 @@ void MixnMap::setup()
 {
 	log->logTimedString("setup");
 
+	mBatchass->setup();
 	// instanciate the Shaders class, must not be in prepareSettings
-	mShaders = Shaders::create(mParameterBag);
+	//mShaders = Shaders::create(mParameterBag);
 	// instanciate the textures class
-	mTextures = Textures::create(mParameterBag, mShaders);
+	//mTextures = Textures::create(mParameterBag, mShaders);
 	// instanciate the spout class
-	mSpout = SpoutWrapper::create(mParameterBag, mTextures);
+	mSpout = SpoutWrapper::create(mParameterBag, mBatchass->mTextures);
 	// instanciate the Warps class
-	mWarpings = WarpWrapper::create(mParameterBag, mTextures, mShaders);
+	mWarpings = WarpWrapper::create(mParameterBag, mBatchass->mTextures, mBatchass->mShaders);
 	// instanciate the OSC class
-	mOSC = OSC::create(mParameterBag, mShaders, mTextures, mWarpings);
+	mOSC = OSC::create(mParameterBag, mBatchass->mShaders, mBatchass->mTextures);
 	// set ui window and io events callbacks
 	ImGui::setWindow(getWindow());
 
@@ -72,7 +73,7 @@ void MixnMap::fileDrop(FileDropEvent event)
 	// use the last of the dropped files
 	boost::filesystem::path mPath = event.getFile(event.getNumFiles() - 1);
 	string mFile = mPath.string();
-	mTextures->fileDrop(mFile);
+	mBatchass->mTextures->fileDrop(mFile);
 
 
 }
@@ -94,9 +95,9 @@ void MixnMap::update()
 	}
 	mOSC->update();
 	//! update textures
-	mTextures->update();
+	mBatchass->mTextures->update();
 	//! update shaders (must be after the textures update)
-	mShaders->update();
+	mBatchass->mShaders->update();
 
 	mSpout->update();
 	updateWindowTitle();
@@ -110,7 +111,7 @@ void MixnMap::draw()
 
 	// draw textures
 	mSpout->draw();
-	mTextures->draw();
+	mBatchass->mTextures->draw();
 	mWarpings->draw();
 	if (mParameterBag->mShowUI)
 	{
@@ -406,7 +407,7 @@ void MixnMap::draw()
 			{
 				for (int a = 0; a < MAX; a++)
 				{
-					if (mShaders->getShaderName(a) != "default.glsl") ImGui::Button(mShaders->getShaderName(a).c_str());
+					if (mBatchass->mShaders->getShaderName(a) != "default.glsl") ImGui::Button(mBatchass->mShaders->getShaderName(a).c_str());
 				}
 			}
 			ImGui::End();
@@ -414,7 +415,7 @@ void MixnMap::draw()
 		// fps window
 		if (showFps)
 		{
-			ImGui::Begin("Fps", NULL, ImVec2(200, 100));
+			ImGui::Begin("Fps", NULL, ImVec2(200, 60));
 			{
 				static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
 				static int values_offset = 0;
@@ -426,7 +427,7 @@ void MixnMap::draw()
 					values_offset = (values_offset + 1) % values.size();
 				}
 
-				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
+				ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 30));
 			}
 			ImGui::End();
 		}
@@ -489,7 +490,7 @@ void MixnMap::draw()
 
 void MixnMap::resize()
 {
-	mShaders->resize();
+	mBatchass->mShaders->resize();
 	// tell the warps our window has been resized, so they properly scale up or down
 	mWarpings->resize();
 }

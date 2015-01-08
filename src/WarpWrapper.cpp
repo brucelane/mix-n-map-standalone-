@@ -29,7 +29,7 @@ WarpWrapper::WarpWrapper(ParameterBagRef aParameterBag, TexturesRef aTexturesRef
 		mTextures->createWarpInput();
 	}*/
 	// adjust the content size of the warps
-	Warp::setSize(mWarps, ivec2(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight));//mTextures->getTexture(0)->getSize());
+	Warp::setSize(mWarps, ivec2(mParameterBag->mFboWidth, mParameterBag->mFboHeight));//mTextures->getTexture(0)->getSize());
 	log->logTimedString("Warps count " + toString(mWarps.size()));
 
 }
@@ -166,10 +166,10 @@ void WarpWrapper::draw()
 	int i = 0;
 	for (auto &warp : mWarps)
 	{
-		if (mTextures->getWarpFbo(mParameterBag->iWarpFboChannels[i]).active)
+		if (mParameterBag->mWarpFbos[i].active)
 		{
 			//warp->draw(mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getMixTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
-			warp->draw(mTextures->getWarpTexture(mParameterBag->iWarpFboChannels[i]), mTextures->getWarpTexture(mParameterBag->iWarpFboChannels[i])->getBounds());
+			warp->draw(mTextures->getWarpTexture(mParameterBag->mWarpFbos[i].textureIndex), mTextures->getWarpTexture(mParameterBag->mWarpFbos[i].textureIndex)->getBounds());
 			i++;
 		}
 	}

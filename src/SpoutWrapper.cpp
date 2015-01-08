@@ -47,8 +47,16 @@ void SpoutWrapper::update()
 				nReceivers++;
 				log->logTimedString("new receiver count:");
 				log->logTimedString(toString(nReceivers));
+				mParameterBag->mWarpFbos[0].textureIndex = 0;
+				mParameterBag->mWarpFbos[0].textureMode = 0;
 			}
 		}
+	}
+	if (nSenders == 0)
+	{
+		nReceivers = 0;
+		// reset to shader mode
+		mParameterBag->mWarpFbos[0].textureMode = 1;
 	}
 }
 

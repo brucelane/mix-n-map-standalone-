@@ -29,8 +29,8 @@ void MixnMap::prepareSettings(Settings *settings)
 #else
 	settings->setWindowSize(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
 	settings->setWindowPos(ivec2(mParameterBag->mRenderX, mParameterBag->mRenderY));
-	settings->setBorderless();
 #endif  // _DEBUG
+	settings->setBorderless();
 	settings->setResizable(false); // resize allowed for a receiver, but runtime error on the resize in the shaders drawing
 	// set a high frame rate 1000 to disable limitation
 	settings->setFrameRate(60.0f);
@@ -474,7 +474,7 @@ void MixnMap::draw()
 					mParameterBag->newOSCMsg = false;
 					OSClog.append(mParameterBag->OSCMsg.c_str());
 					lines++;
-					if (lines > 1000) { OSClog.clear(); lines = 0; }
+					if (lines > 3) { OSClog.clear(); lines = 0; }
 				}
 				ImGui::BeginChild("OSClog");
 				ImGui::TextUnformatted(OSClog.begin(), OSClog.end());

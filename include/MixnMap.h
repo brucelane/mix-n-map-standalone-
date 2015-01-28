@@ -40,7 +40,7 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 // Utils
 #include "Batchass.h"
 // UserInterface
-#include "imGuiCinder.h"
+#include "ImGuiCinder.h"
 
 using namespace ci;
 using namespace ci::app;

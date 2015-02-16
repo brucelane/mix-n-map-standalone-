@@ -115,6 +115,7 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\blocks\Cinder-Reymenta\include\WarpWrapper.h" />
     <ClInclude Include="..\include\MixnMap.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\..\..\blocks\Cinder-Hap2\src\HapSupport.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="..\include\WarpWrapper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\blocks\Cinder-Reymenta\src\WarpWrapper.cpp" />
     <ClCompile Include="..\src\MixnMap.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-Hap2\src\MovieHap.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-Hap2\src\HapSupport.c" />

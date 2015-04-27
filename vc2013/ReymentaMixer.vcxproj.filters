@@ -108,12 +108,6 @@
     <ClCompile Include="..\..\..\blocks\Cinder-ImGui\lib\imgui\imgui.cpp">
       <Filter>Blocks\imGui\lib\imgui</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.h">
-      <Filter>Blocks\imGui\src</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.cpp">
-      <Filter>Blocks\imGui\src</Filter>
-    </ClCompile>
     <ClInclude Include="..\..\..\blocks\Cinder-MIDI2\include\MidiConstants.h">
       <Filter>Blocks\Midi2\include</Filter>
     </ClInclude>
@@ -318,6 +312,9 @@
     <ClInclude Include="..\..\..\blocks\Cinder-Reymenta\include\WarpWrapper.h">
       <Filter>Blocks\Reymenta\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\include\CinderImGui.h">
+      <Filter>Blocks\imGui\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -344,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\blocks\Cinder-Reymenta\src\WarpWrapper.cpp">
       <Filter>Blocks\Reymenta\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\CinderImGui.cpp">
+      <Filter>Blocks\imGui\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

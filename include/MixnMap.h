@@ -20,7 +20,7 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cinder/ImageIo.h"
 #include "cinder/Rand.h"
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -40,7 +40,7 @@ along with Cinder-Warping.  If not, see <http://www.gnu.org/licenses/>.
 // Utils
 #include "Batchass.h"
 // UserInterface
-#include "ImGuiCinder.h"
+#include "CinderImGui.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -50,9 +50,9 @@ using namespace Reymenta;
 
 #define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
-class MixnMap : public AppNative {
+class MixnMap : public App {
 public:
-	void prepareSettings(Settings *settings);
+
 
 	void setup();
 	void shutdown();
